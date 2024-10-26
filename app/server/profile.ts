@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/start';
 import { db } from '../db/client';
-import { uploadImage } from '../repos/image';
+import { getImagePublicUrl, uploadImage } from '../repos/image';
 import { createProfile, getProfile } from '../repos/profile';
 import { createProfileSchema, getProfileSchema } from '../schemas/profile';
 import { serverZodValidator } from '../utils/server';
@@ -30,8 +30,19 @@ export const createProfileFn = createServerFn(
 				return path;
 			}),
 		);
+		const pictureUrls = await Promise.all(
+			picturePaths.map(async (path) => {
+				const url = await getImagePublicUrl(supabase, path);
+				return url;
+			}),
+		);
 
-		const profile = await createProfile(db, { userId: user.id, ...value, picturePaths });
+		const profile = await createProfile(db, {
+			userId: user.id,
+			...value,
+			picturePaths,
+			pictureUrls,
+		});
 		return profile;
 	}),
 );
