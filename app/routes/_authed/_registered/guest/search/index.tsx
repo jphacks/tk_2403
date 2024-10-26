@@ -1,12 +1,12 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { FiSearch } from 'react-icons/fi';
-import { css, cx } from '../../../../../styled-system/css';
-import Header from '../../../../components/shared/header';
-import UserNavbar from '../../../../components/shared/userNavbar';
-import CardWithDangerBand from '../../../../components/shared/wantToBorrow/cardWithDangerBand';
-import { layoutStyle } from '../../../../styles/layout';
+import { css, cx } from '../../../../../../styled-system/css';
+import Header from '../../../../../components/shared/header';
+import UserNavbar from '../../../../../components/shared/userNavbar';
+import CardWithDangerBand from '../../../../../components/shared/wantToBorrow/cardWithDangerBand';
+import { layoutStyle } from '../../../../../styles/layout';
 
-export const Route = createFileRoute('/_authed/_registered/guest/search')({
+export const Route = createFileRoute('/_authed/_registered/guest/search/')({
 	component: Page6,
 });
 
