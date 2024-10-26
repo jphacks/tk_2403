@@ -57,7 +57,7 @@ function CreatePlace() {
 			className={cx(
 				containerStyle(),
 				css({
-					spaceY: '20',
+					spaceY: '16',
 				}),
 			)}
 		>
@@ -83,7 +83,7 @@ function CreatePlace() {
 						setShowPicturesError(true);
 					}
 				}}
-				className={css({ spaceY: '10' })}
+				className={css({ spaceY: '16' })}
 			>
 				<div className={css({ spaceY: '4' })}>
 					<Subtitle text="提供場所の写真" />
@@ -135,7 +135,6 @@ function CreatePlace() {
 				<div
 					className={css({
 						spaceY: '4',
-						py: '[30px]',
 					})}
 				>
 					<Subtitle text="基本情報" />
