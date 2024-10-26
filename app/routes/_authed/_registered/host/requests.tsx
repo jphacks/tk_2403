@@ -7,7 +7,7 @@ import Tab from '../../../../components/shared/tab';
 import CardWithTag from '../../../../components/shared/wantToLend/cardWithTag';
 import { layoutStyle } from '../../../../styles/layout';
 
-export const Route = createFileRoute('/_authed/_registered/host/request')({
+export const Route = createFileRoute('/_authed/_registered/host/requests')({
 	component: Page6,
 });
 
