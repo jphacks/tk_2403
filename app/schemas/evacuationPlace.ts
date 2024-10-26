@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+export const getEvacuationPlaceSchema = z.object({
+	id: z.number(),
+});
+
 export const createEvacuationPlaceSchema = z.object({
 	description: z.string().min(1, '1文字以上で入力してください'),
 	address: z.string().min(1, '1文字以上で入力してください'),
