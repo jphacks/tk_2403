@@ -15,6 +15,20 @@
       "when": 1729910300622,
       "tag": "0001_hard_miracleman",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1729925888833,
+      "tag": "0002_striped_aqueduct",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1729926649105,
+      "tag": "0003_romantic_old_lace",
+      "breakpoints": true
     }
   ]
 }
