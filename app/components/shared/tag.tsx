@@ -1,4 +1,4 @@
-import { cva } from "../../../styled-system/css";
+import { cva } from '../../../styled-system/css';
 
 type Props = {
 	type: 'permit' | 'beforePermit' | 'reject';
