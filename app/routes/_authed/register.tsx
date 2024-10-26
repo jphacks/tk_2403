@@ -4,11 +4,15 @@ import { useServerFn } from '@tanstack/start';
 import { zodValidator } from '@tanstack/zod-form-adapter';
 import { useState } from 'react';
 import { css } from '../../../styled-system/css';
+import ImageInput from '../../components/imageInput';
 import { InfoRow } from '../../components/shared/infoRow';
 import SelectInfoRow from '../../components/shared/selectInfoRow';
+import Subtitle from '../../components/subtitle';
+import Textarea from '../../components/textarea';
 import { createProfileSchema } from '../../schemas/profile';
 import { createProfileFn, getProfileFn } from '../../server/profile';
 import { containerStyle } from '../../styles/layout';
+import type { Image } from '../../types/image';
 
 export const Route = createFileRoute('/_authed/register')({
 	loader: async ({ context }) => {
@@ -16,6 +20,8 @@ export const Route = createFileRoute('/_authed/register')({
 		if (profile !== undefined) {
 			throw redirect({ to: '/' });
 		}
+
+		return { session: context.session };
 	},
 	component: Register,
 });
@@ -23,6 +29,8 @@ export const Route = createFileRoute('/_authed/register')({
 function Register() {
 	const router = useRouter();
 
+	const [pictures, setPictures] = useState<Image[]>([]);
+	const [showPicturesError, setShowPicturesError] = useState(false);
 	const [ageConfirmed, setAgeConfirmed] = useState(false);
 	const [termsAgreed, setTermsAgreed] = useState(false);
 
@@ -33,10 +41,14 @@ function Register() {
 			name: '',
 			gender: undefined,
 			dateOfBirth: '',
-		} as unknown as typeof createProfileSchema._input,
+			biography: '',
+		} as unknown as Omit<typeof createProfileSchema._input, 'pictures'>,
 		validatorAdapter: zodValidator(),
 		onSubmit: async ({ value }) => {
-			await createProfile(value);
+			if (pictures.length === 0) {
+				return;
+			}
+			await createProfile({ ...value, pictures });
 			await router.invalidate();
 		},
 	});
@@ -61,67 +73,116 @@ function Register() {
 					if (ageConfirmed && termsAgreed && form.state.canSubmit && !form.state.isSubmitting) {
 						form.handleSubmit();
 					}
+					if (pictures.length === 0) {
+						setShowPicturesError(true);
+					}
 				}}
+				className={css({ spaceY: '10' })}
 			>
+				<div className={css({ spaceY: '4' })}>
+					<Subtitle text="写真" />
+					<div className={css({ spaceY: '2' })}>
+						<ImageInput
+							onChange={({ newImages }) => {
+								setPictures(newImages);
+								if (newImages.length === 0) {
+									setShowPicturesError(true);
+								} else {
+									setShowPicturesError(false);
+								}
+							}}
+						/>
+						{showPicturesError && (
+							<p
+								className={css({
+									px: '3',
+									color: 'alert',
+									fontSize: 'xs',
+								})}
+							>
+								写真を1枚以上追加してください。
+							</p>
+						)}
+					</div>
+				</div>
+
+				<div className={css({ spaceY: '4' })}>
+					<Subtitle text="基本情報" />
+					<div
+						className={css({
+							borderTopWidth: '1px',
+							borderColor: 'border',
+							width: 'full',
+							mb: '8',
+							backgroundColor: 'white',
+						})}
+					>
+						<form.Field name="name" validators={{ onChange: createProfileSchema.shape.name }}>
+							{(field) => (
+								<InfoRow
+									label="名前"
+									value={field.state.value}
+									placeholder="例: 山田 太郎"
+									errors={field.state.meta.errors}
+									onChange={(value) => field.handleChange(value)}
+									onBlur={field.handleBlur}
+								/>
+							)}
+						</form.Field>
+						<form.Field name="gender" validators={{ onChange: createProfileSchema.shape.gender }}>
+							{(field) => (
+								<SelectInfoRow
+									selectList={{ male: '男', female: '女', other: 'その他' }}
+									label="性別"
+									value={field.state.value}
+									errors={field.state.meta.errors}
+									onChange={(value) => field.handleChange(value)}
+									onBlur={field.handleBlur}
+								/>
+							)}
+						</form.Field>
+						<form.Field name="dateOfBirth" validators={{ onChange: createProfileSchema.shape.dateOfBirth }}>
+							{(field) => (
+								<InfoRow
+									label="生年月日"
+									value={field.state.value}
+									placeholder="例: 2000-01-01"
+									errors={field.state.meta.errors}
+									onChange={(value) => field.handleChange(value)}
+									onBlur={field.handleBlur}
+								/>
+							)}
+						</form.Field>
+					</div>
+				</div>
+
 				<div
 					className={css({
-						borderTopWidth: '1px',
-						borderColor: 'border',
-						width: 'full',
-						mb: '8',
-						backgroundColor: 'white',
+						display: 'flex',
+						flexDirection: 'column',
+						spaceY: '4',
 					})}
 				>
-					<form.Field name="name" validators={{ onChange: createProfileSchema.shape.name }}>
+					<Subtitle text="自己紹介" />
+
+					<form.Field name="biography" validators={{ onChange: createProfileSchema.shape.biography }}>
 						{(field) => (
-							<InfoRow
-								label="名前"
-								value={field.state.value}
-								placeholder="例: 山田 太郎"
-								errors={field.state.meta.errors}
-								onChange={(value) => field.handleChange(value)}
-							/>
-						)}
-					</form.Field>
-					<form.Field name="gender" validators={{ onChange: createProfileSchema.shape.gender }}>
-						{(field) => (
-							<SelectInfoRow
-								selectList={{ male: '男', female: '女', other: 'その他' }}
-								label="性別"
+							<Textarea
+								placeholder="自己紹介を入力してください..."
 								value={field.state.value}
 								errors={field.state.meta.errors}
 								onChange={(value) => field.handleChange(value)}
-							/>
-						)}
-					</form.Field>
-					<form.Field name="dateOfBirth" validators={{ onChange: createProfileSchema.shape.dateOfBirth }}>
-						{(field) => (
-							<InfoRow
-								label="生年月日"
-								value={field.state.value}
-								placeholder="例: 2000-01-01"
-								errors={field.state.meta.errors}
-								onChange={(value) => field.handleChange(value)}
+								onBlur={field.handleBlur}
 							/>
 						)}
 					</form.Field>
 				</div>
+
 				<div
 					className={css({
 						width: 'full',
 					})}
 				>
-					<p
-						className={css({
-							mb: '[120px]',
-							paddingLeft: '2',
-							color: 'text.muted',
-							fontSize: 'sm',
-						})}
-					>
-						この設定は後から変更可能です。
-					</p>
-
 					<label
 						className={css({
 							display: 'flex',
@@ -191,16 +252,18 @@ function Register() {
 									borderRadius: 'md',
 									width: 'full',
 									padding: '3',
-									color: 'text.muted',
+									color: 'white',
 									fontSize: 'sm',
 									fontWeight: 'bold',
-									backgroundColor: 'border',
+									backgroundColor: 'primary',
 									cursor: 'pointer',
 									_disabled: {
+										color: 'text.muted',
+										backgroundColor: 'border',
 										cursor: 'not-allowed',
 									},
 								})}
-								disabled={!ageConfirmed || !termsAgreed || !canSubmit || isSubmitting}
+								disabled={!ageConfirmed || !termsAgreed || showPicturesError || !canSubmit || isSubmitting}
 							>
 								二次待避くんをはじめる
 							</button>

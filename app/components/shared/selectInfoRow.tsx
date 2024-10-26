@@ -10,6 +10,7 @@ type Props<T extends Record<string, string>> = {
 	value: Extract<keyof T, string> | undefined;
 	errors: ValidationError[];
 	onChange: (value: Extract<keyof T, string>) => void;
+	onBlur: () => void;
 };
 
 export default function SelectInfoRow<T extends Record<string, string>>({
@@ -18,6 +19,7 @@ export default function SelectInfoRow<T extends Record<string, string>>({
 	value,
 	errors,
 	onChange,
+	onBlur,
 }: Props<T>) {
 	return (
 		<div
@@ -36,17 +38,22 @@ export default function SelectInfoRow<T extends Record<string, string>>({
 					display: 'flex',
 				})}
 			>
-				<div className={css({ flex: '1' })}>{label}</div>
-				<Select.Root value={value} onValueChange={(value) => onChange(value as Extract<keyof T, string>)}>
+				<div className={css({ flex: '1', color: 'text.muted' })}>{label}</div>
+				<Select.Root
+					value={value}
+					onValueChange={(value) => onChange(value as Extract<keyof T, string>)}
+					onOpenChange={(open) => {
+						if (!open) {
+							onBlur();
+						}
+					}}
+				>
 					<Select.Trigger
 						className={css({
 							display: 'flex',
 							flex: '1',
 							gap: '4',
 							justifyContent: 'space-between',
-							alignItems: 'center',
-							py: '1',
-							px: '3',
 							color: 'primary',
 							fontSize: 'sm',
 							bg: 'white',
