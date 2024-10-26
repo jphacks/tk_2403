@@ -1,0 +1,9 @@
+{
+	"useTabs": true,
+	"semi": true,
+	"singleQuote": true,
+	"trailingComma": "all",
+	"printWidth": 120,
+	"plugins": ["@pandabox/prettier-plugin"],
+	"pandaOnlyComponents": true
+}
