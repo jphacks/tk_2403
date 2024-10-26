@@ -282,7 +282,7 @@ function EditPlace() {
 							className={buttonStyle({ type: 'normal' })}
 							disabled={showPicturesError || showInvalidAddressError || !canSubmit || isSubmitting}
 						>
-							登録する
+							保存する
 						</button>
 					)}
 				</form.Subscribe>
