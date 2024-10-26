@@ -1,9 +1,10 @@
 import { relations } from 'drizzle-orm';
 import {} from 'drizzle-orm/pg-core';
-import { areaTable, evacuationPlaceTable, profileTable, requestTable } from './schema';
+import { areaTable, evacuationPlaceTable, favoriteEvacuationPlaceTable, profileTable, requestTable } from './schema';
 
 export const profileRelations = relations(profileTable, ({ many }) => ({
 	requests: many(requestTable),
+	favoriteEvacuationPlaces: many(favoriteEvacuationPlaceTable),
 	evacuationPlaces: many(evacuationPlaceTable),
 }));
 
@@ -17,6 +18,7 @@ export const evacuationPlaceRelations = relations(evacuationPlaceTable, ({ one, 
 		references: [areaTable.id],
 	}),
 	requests: many(requestTable),
+	favorites: many(favoriteEvacuationPlaceTable),
 }));
 
 export const areaRelations = relations(areaTable, ({ many }) => ({
@@ -30,6 +32,17 @@ export const requestRelations = relations(requestTable, ({ one }) => ({
 	}),
 	evacuationPlace: one(evacuationPlaceTable, {
 		fields: [requestTable.evacuationPlaceId],
+		references: [evacuationPlaceTable.id],
+	}),
+}));
+
+export const favoriteEvacuationPlaceRelations = relations(favoriteEvacuationPlaceTable, ({ one }) => ({
+	profile: one(profileTable, {
+		fields: [favoriteEvacuationPlaceTable.profileId],
+		references: [profileTable.userId],
+	}),
+	evacuationPlace: one(evacuationPlaceTable, {
+		fields: [favoriteEvacuationPlaceTable.evacuationPlaceId],
 		references: [evacuationPlaceTable.id],
 	}),
 }));

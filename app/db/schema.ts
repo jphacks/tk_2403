@@ -1,4 +1,4 @@
-import { boolean, integer, pgEnum, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
+import { boolean, integer, pgEnum, pgTable, serial, text, timestamp, unique } from 'drizzle-orm/pg-core';
 
 export const genderEnum = pgEnum('gender', ['male', 'female', 'other']);
 export const safetyEnum = pgEnum('safety', ['safe', 'caution', 'danger']);
@@ -67,3 +67,26 @@ export const requestTable = pgTable('request', {
 		.$onUpdate(() => new Date())
 		.notNull(),
 });
+
+export const favoriteEvacuationPlaceTable = pgTable(
+	'favorite_evacuation_place',
+	{
+		id: serial('id').primaryKey(),
+		profileId: text('profile_id')
+			.notNull()
+			.references(() => profileTable.userId),
+		evacuationPlaceId: integer('evacuation_place_id')
+			.notNull()
+			.references(() => evacuationPlaceTable.id),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		updatedAt: timestamp('updated_at')
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			favoriteUnique: unique('favorite_unique').on(table.profileId, table.evacuationPlaceId),
+		};
+	},
+);
