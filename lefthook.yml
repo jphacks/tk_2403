@@ -1,0 +1,15 @@
+pre-commit:
+  commands:
+    lint:
+      run: pnpm biome lint --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
+    organize-imports:
+      run: pnpm biome check --no-errors-on-unmatched --files-ignore-unknown=true --colors=off --linter-enabled=false --write {staged_files}
+      stage_fixed: true
+    format:
+      run: pnpm prettier --write --ignore-unknown {staged_files}
+      stage_fixed: true
+
+commit-msg:
+  commands:
+    lint-commit-message:
+      run: pnpm commitlint --edit "$1"

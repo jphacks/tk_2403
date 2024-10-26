@@ -1,0 +1,24 @@
+node_modules
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Tanstack Start
+routeTree.gen.ts
+/dist
+/.vinxi
+/.vercel
+
+## Devbox
+/.devbox
+
+## Panda
+styled-system
+styled-system-studio
