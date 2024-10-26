@@ -64,125 +64,83 @@ export default function ImageInput({ defaultUrls = [], onChange }: Props) {
 	};
 
 	return (
-		<div className={css({ mx: '-4', spaceY: '2' })}>
-			{currentIndex !== null ? (
-				<img
-					src={urls[showIndices[currentIndex]!]}
-					alt="Selected house"
-					className={css({
-						objectFit: 'cover',
-						rounded: 'xl',
-						w: '[260px]',
-						h: '[260px]',
-						mx: 'auto',
-						bg: '[#aaa]',
-					})}
-				/>
-			) : (
+		<div className={css({ mx: '-4', overflowX: 'scroll' })}>
+			<div
+				className={css({
+					display: 'flex',
+					gap: '4',
+					width: '[max-content]',
+					px: '[15px]',
+				})}
+			>
+				{urls.map((url, i) => {
+					if (deleteIndices.includes(i)) return null;
+					return (
+						// biome-ignore lint/suspicious/noArrayIndexKey:
+						<div key={i} className={css({ position: 'relative', flexShrink: '0' })}>
+							<img
+								src={url}
+								alt=""
+								onClick={() => handleThumbnailClick(i)}
+								onKeyDown={(e) => {
+									if (e.key === 'Enter' || e.key === ' ') {
+										handleThumbnailClick(i);
+									}
+								}}
+								className={css({
+									flexShrink: '0',
+									objectFit: 'cover',
+									rounded: 'xl',
+									w: '[128px]',
+									h: '[128px]',
+									cursor: 'pointer',
+								})}
+							/>
+							<button
+								type="button"
+								onClick={() => handleDeleteImage(i)}
+								className={css({
+									display: 'flex',
+									position: 'absolute',
+									top: '0',
+									right: '0',
+									justifyContent: 'center',
+									alignItems: 'center',
+									rounded: 'full',
+									width: '5',
+									height: '5',
+									p: '1',
+									pb: '2',
+									color: 'white',
+									bg: 'alert',
+								})}
+							>
+								×
+							</button>
+						</div>
+					);
+				})}
+
 				<label
 					className={css({
 						display: 'flex',
+						flexShrink: '0',
 						justifyContent: 'center',
 						alignItems: 'center',
-						borderColor: 'border',
+						objectFit: 'cover',
 						borderRadius: 'xl',
-						borderWidth: '1px',
-						width: '[260px]',
-						height: '[260px]',
-						mx: 'auto',
+						width: '[128px]',
+						height: '[128px]',
+						color: 'text.muted',
 						fontSize: '3xl',
-						bg: 'white',
-						borderStyle: 'dashed',
+						bg: 'border',
 						cursor: 'pointer',
 					})}
 				>
 					＋
 					<input type="file" accept="image/*" onChange={handleAddImage} style={{ display: 'none' }} />
 				</label>
-			)}
-
-			{urls.length > 0 && (
-				<div className={css({ overflowX: 'scroll' })}>
-					<div
-						className={css({
-							display: 'flex',
-							gap: '4',
-							width: '[max-content]',
-							px: '[15px]',
-						})}
-					>
-						{urls.map((url, i) => {
-							if (deleteIndices.includes(i)) return null;
-							return (
-								// biome-ignore lint/suspicious/noArrayIndexKey:
-								<div key={i} className={css({ position: 'relative', flexShrink: '0' })}>
-									<img
-										src={url}
-										alt=""
-										onClick={() => handleThumbnailClick(i)}
-										onKeyDown={(e) => {
-											if (e.key === 'Enter' || e.key === ' ') {
-												handleThumbnailClick(i);
-											}
-										}}
-										className={css({
-											flexShrink: '0',
-											objectFit: 'cover',
-											rounded: 'xl',
-											w: '[70px]',
-											h: '[70px]',
-											cursor: 'pointer',
-										})}
-									/>
-									<button
-										type="button"
-										onClick={() => handleDeleteImage(i)}
-										className={css({
-											display: 'flex',
-											position: 'absolute',
-											top: '0',
-											right: '0',
-											justifyContent: 'center',
-											alignItems: 'center',
-											rounded: 'full',
-											width: '5',
-											height: '5',
-											p: '1',
-											pb: '2',
-											color: 'white',
-											bg: 'alert',
-										})}
-									>
-										×
-									</button>
-								</div>
-							);
-						})}
-
-						{urls.length > 0 && (
-							<label
-								className={css({
-									display: 'flex',
-									flexShrink: '0',
-									justifyContent: 'center',
-									alignItems: 'center',
-									objectFit: 'cover',
-									borderColor: 'border',
-									borderRadius: 'xl',
-									borderWidth: '1px',
-									width: '[70px]',
-									height: '[70px]',
-									borderStyle: 'dashed',
-									cursor: 'pointer',
-								})}
-							>
-								＋
-								<input type="file" accept="image/*" onChange={handleAddImage} style={{ display: 'none' }} />
-							</label>
-						)}
-					</div>
-				</div>
-			)}
+			</div>
 		</div>
 	);
 }

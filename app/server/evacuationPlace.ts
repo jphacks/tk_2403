@@ -19,7 +19,7 @@ export const createEvacuationPlaceFn = createServerFn(
 		const formattedAddress = await getFormattedAddress(value.address);
 
 		if (formattedAddress === null) {
-			return { error: 'invalid-address' };
+			return { error: 'invalid-address' as const };
 		}
 
 		const supabase = getSupabaseServerClient();
@@ -34,6 +34,7 @@ export const createEvacuationPlaceFn = createServerFn(
 			profileId: user.id,
 			...value,
 			address: formattedAddress,
+			maxHeadcount: Number.parseInt(value.maxHeadcount),
 			picturePaths,
 		});
 		return { place };

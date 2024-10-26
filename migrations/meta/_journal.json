@@ -50,6 +50,13 @@
       "when": 1729948182133,
       "tag": "0006_sweet_whirlwind",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1729959429146,
+      "tag": "0007_equal_talisman",
+      "breakpoints": true
     }
   ]
 }

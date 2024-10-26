@@ -24,7 +24,6 @@ export const evacuationPlaceTable = pgTable('evacuation_place', {
 		.notNull()
 		.unique()
 		.references(() => profileTable.userId),
-	name: text('name').notNull(),
 	description: text('description').notNull(),
 	picturePaths: text('picture_paths').notNull().array(),
 	address: text('address').notNull(),
