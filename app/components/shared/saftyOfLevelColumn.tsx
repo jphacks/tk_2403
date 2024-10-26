@@ -1,7 +1,6 @@
 import { css } from '../../../styled-system/css';
 import Tag from './tag';
 
-
 type Props = {
 	address: string;
 	type: 'permit' | 'beforePermit' | 'reject';
