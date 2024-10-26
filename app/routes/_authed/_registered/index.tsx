@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { FaHouse } from 'react-icons/fa6';
 import { GoPersonFill } from 'react-icons/go';
-import { css } from '../../../styled-system/css';
-import Card from '../../components/selectPage/Card';
-import { containerStyle } from '../../styles/layout';
+import { css } from '../../../../styled-system/css';
+import Card from '../../../components/selectPage/Card';
+import { containerStyle } from '../../../styles/layout';
 
-export const Route = createFileRoute('/_authed/')({
+export const Route = createFileRoute('/_authed/_registered/')({
 	component: Home,
 });
 

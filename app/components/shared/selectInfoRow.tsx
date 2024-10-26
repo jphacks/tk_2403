@@ -1,34 +1,126 @@
+import * as Select from '@radix-ui/react-select';
+import type { ValidationError } from '@tanstack/react-form';
+import { FaCheck } from 'react-icons/fa';
+import { IoIosArrowDown } from 'react-icons/io';
 import { css } from '../../../styled-system/css';
-import SelectFiled from './selectField'
 
-type Props = {
+type Props<T extends Record<string, string>> = {
 	label: string;
-	selectList: string[];
+	selectList: T;
+	value: Extract<keyof T, string> | undefined;
+	errors: ValidationError[];
+	onChange: (value: Extract<keyof T, string>) => void;
 };
 
-export default function SelectInfoRow({ label, selectList }: Props) {
+export default function SelectInfoRow<T extends Record<string, string>>({
+	label,
+	selectList,
+	value,
+	errors,
+	onChange,
+}: Props<T>) {
 	return (
 		<div
 			className={css({
 				display: 'flex',
-				justifyContent: 'space-between',
-				alignItems: 'center',
+				gap: '2',
+				flexDir: 'column',
 				borderBottomWidth: '1px',
 				borderColor: 'border',
 				padding: '3',
-				color: 'text.muted',
 				fontSize: 'sm',
 			})}
 		>
-			<div className={css({ flex: '1' })}>{label}</div>
 			<div
 				className={css({
-					flex: '1',
-					color: '[#f90]',
+					display: 'flex',
 				})}
 			>
-				<SelectFiled selectList={selectList} />
+				<div className={css({ flex: '1' })}>{label}</div>
+				<Select.Root value={value} onValueChange={(value) => onChange(value as Extract<keyof T, string>)}>
+					<Select.Trigger
+						className={css({
+							display: 'flex',
+							flex: '1',
+							gap: '4',
+							justifyContent: 'space-between',
+							alignItems: 'center',
+							py: '1',
+							px: '3',
+							color: 'primary',
+							fontSize: 'sm',
+							bg: 'white',
+							_placeholder: {
+								color: 'primary/50',
+							},
+							_focus: {
+								outline: 'none',
+							},
+						})}
+						aria-label="Food"
+					>
+						<Select.Value placeholder="選択" />
+						<Select.Icon>
+							<IoIosArrowDown className={css({ color: 'primary' })} />
+						</Select.Icon>
+					</Select.Trigger>
+					<Select.Portal>
+						<Select.Content
+							className={css({
+								borderColor: 'border',
+								rounded: 'md',
+								borderWidth: '1px',
+								bg: 'white',
+							})}
+						>
+							<Select.Viewport>
+								<Select.Group>
+									{Object.entries(selectList).map(([value, label]) => (
+										<Select.Item
+											key={value}
+											className={css({
+												display: 'flex',
+												gap: '4',
+												justifyContent: 'space-between',
+												alignItems: 'center',
+												w: 'full',
+												py: '1',
+												px: '3',
+												color: 'primary',
+												_focus: {
+													outline: 'none',
+												},
+											})}
+											value={value}
+										>
+											<Select.ItemText>{label}</Select.ItemText>
+											<Select.ItemIndicator>
+												<FaCheck />
+											</Select.ItemIndicator>
+										</Select.Item>
+									))}
+								</Select.Group>
+							</Select.Viewport>
+						</Select.Content>
+					</Select.Portal>
+				</Select.Root>
 			</div>
+			{errors.length > 0 && (
+				<div>
+					{errors.map((error, i) => (
+						<p
+							// biome-ignore lint/suspicious/noArrayIndexKey:
+							key={i}
+							className={css({
+								color: 'alert',
+								fontSize: 'xs',
+							})}
+						>
+							{error}
+						</p>
+					))}
+				</div>
+			)}
 		</div>
 	);
 }
