@@ -4,7 +4,7 @@ import DangerBand from '../dangerBand';
 type Props = {
 	houseName: string;
 	houseImgList: string[];
-	type: 'safe' | 'warn' | 'danger';
+	type: 'safe' | 'caution' | 'danger';
 	address: string;
 	intro: string;
 };

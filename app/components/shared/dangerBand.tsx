@@ -1,7 +1,7 @@
 import { css, cva } from '../../../styled-system/css';
 
 type Props = {
-	type: 'safe' | 'warn' | 'danger';
+	type: 'safe' | 'caution' | 'danger';
 	address: string;
 };
 
@@ -18,7 +18,7 @@ export default function DangerBand({ type, address }: Props) {
 		variants: {
 			type: {
 				safe: { bg: 'safe.bg' },
-				warn: { bg: 'warn.bg' },
+				caution: { bg: 'warn.bg' },
 				danger: { bg: 'alert.bg' },
 			},
 		},
@@ -38,7 +38,7 @@ export default function DangerBand({ type, address }: Props) {
 		variants: {
 			type: {
 				safe: { bg: 'safe' },
-				warn: { bg: 'warn' },
+				caution: { bg: 'warn' },
 				danger: { bg: 'alert' },
 			},
 		},
@@ -48,7 +48,7 @@ export default function DangerBand({ type, address }: Props) {
 		<div className={dangerBandStyle({ type })}>
 			<div className={dangerLabelStyle({ type })}>
 				{type === 'safe' && '安全'}
-				{type === 'warn' && '少し危険'}
+				{type === 'caution' && '少し危険'}
 				{type === 'danger' && '危険'}
 			</div>
 			<p

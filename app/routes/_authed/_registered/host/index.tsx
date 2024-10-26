@@ -7,14 +7,26 @@ import SaftyofLevelColumn from '../../../../components/shared/saftyOfLevelColumn
 import Card from '../../../../components/shared/wantToLend/card';
 import CardWithDangerBandAndStar from '../../../../components/shared/wantToLend/cardWithDangerBandAndStar';
 import Subtitle from '../../../../components/subtitle';
+import { getMyEvacuationPlaceFn } from '../../../../server/evacuationPlace';
 import { layoutStyle } from '../../../../styles/layout';
+import { serverFnQueryWrapper } from '../../../../utils/client';
+
+const myEvacuationPlaceQueryWrapper = serverFnQueryWrapper({
+	queryKey: ['evacuationPlace', 'mine'],
+	serverFn: getMyEvacuationPlaceFn,
+	queryFn: (fn) => fn(),
+});
 
 export const Route = createFileRoute('/_authed/_registered/host/')({
+	loader: async ({ context }) => {
+		await context.queryClient.prefetchQuery(myEvacuationPlaceQueryWrapper.serverQueryOptions);
+	},
 	component: Host,
 });
 
 function Host() {
 	const list = [];
+	const myEvacuationPlaceQuery = myEvacuationPlaceQueryWrapper.useQuery();
 
 	return (
 		<div
@@ -71,20 +83,15 @@ function Host() {
 					>
 						<Subtitle text="退避場所" />
 					</div>
-					{list.length > 0 && (
+					{myEvacuationPlaceQuery.data !== undefined ? (
 						<CardWithDangerBandAndStar
-							type="safe"
-							address="〇〇県〇〇市"
-							houseName="釘崎家"
-							intro="初めまして、とみたです。よろしくお願いします。"
-							houseImgList={[
-								'https://placehold.jp/150x150.png',
-								'https://placehold.jp/150x150.png',
-								'https://placehold.jp/150x150.png',
-							]}
+							type={myEvacuationPlaceQuery.data.area?.safety ?? 'safe'}
+							address={myEvacuationPlaceQuery.data.address}
+							houseName={myEvacuationPlaceQuery.data.profile.name}
+							intro={myEvacuationPlaceQuery.data.description}
+							houseImgList={myEvacuationPlaceQuery.data.pictureUrls}
 						/>
-					)}
-					{list.length === 0 && (
+					) : (
 						<Link
 							to="/host/place/create"
 							className={css({
