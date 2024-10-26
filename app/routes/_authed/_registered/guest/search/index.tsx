@@ -31,10 +31,10 @@ function Page6() {
 						px: '4',
 						bg: 'white',
 					})}
-					onClick={() => navigate({ to: '/' })}
+					onClick={() => navigate({ to: '/guest/search/filter' })}
 					onKeyUp={(e) => {
 						if (e.key === 'Enter' || e.key === ' ') {
-							navigate({ to: '/' });
+							navigate({ to: '/guest/search/filter' });
 						}
 					}}
 				>
