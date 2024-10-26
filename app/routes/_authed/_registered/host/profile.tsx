@@ -21,7 +21,7 @@ function Page9() {
 				bg: 'bg',
 			})}
 		>
-			<Header title="プロフィール" />
+			<Header title="プロフィール" to="/" />
 			<div className={profileContainerStyle()}>
 				<div
 					className={css({
