@@ -4,10 +4,10 @@ import { css, cx } from '../../../../../styled-system/css'
 import Header from '../../../../components/shared/header'
 import HostNavbar from '../../../../components/shared/hostNavbar'
 import SaftyofLevelColumn from '../../../../components/shared/saftyOfLevelColumn'
-import Subtitle from '../../../../components/shared/subTitle'
 import Card from '../../../../components/shared/wantToLend/card'
 import CardWithDangerBandAndStar from '../../../../components/shared/wantToLend/cardWithDangerBandAndStar'
 import { layoutStyle } from '../../../../styles/layout'
+import Subtitle from '../../../../components/subtitle'
 
 export const Route = createFileRoute('/_authed/_registered/host/')({
   component: Host,
