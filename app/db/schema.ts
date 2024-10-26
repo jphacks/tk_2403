@@ -22,13 +22,12 @@ export const evacuationPlaceTable = pgTable('evacuation_place', {
 	id: serial('id').primaryKey(),
 	profileId: text('profile_id')
 		.notNull()
+		.unique()
 		.references(() => profileTable.userId),
 	name: text('name').notNull(),
 	description: text('description').notNull(),
 	picturePaths: text('picture_paths').notNull().array(),
-	areaId: integer('area_id').references(() => areaTable.id),
 	address: text('address').notNull(),
-	formattedAddress: text('formatted_address').notNull(),
 	maxHeadcount: integer('max_headcount').notNull(),
 	availablePeriodStart: text('available_period_start').notNull(), // YYYY-MM
 	availablePeriodEnd: text('available_period_end').notNull(), // YYYY-MM
@@ -43,7 +42,7 @@ export const evacuationPlaceTable = pgTable('evacuation_place', {
 
 export const areaTable = pgTable('area', {
 	id: serial('id').primaryKey(),
-	name: text('name').notNull(),
+	address: text('address').notNull(),
 	safety: safetyEnum('safety').notNull(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at')
