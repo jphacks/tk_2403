@@ -11,6 +11,7 @@ type Props = {
 
 export default function Header({ title, backToPage = false, to }: Props) {
 	const router = useRouter();
+
 	return (
 		<div
 			className={css({
@@ -30,7 +31,7 @@ export default function Header({ title, backToPage = false, to }: Props) {
 		>
 			{backToPage && (
 				<RxCaretLeft
-					onClick={() => router.history.back}
+					onClick={() => router.history.back()}
 					className={css({
 						position: 'absolute',
 						left: '3',

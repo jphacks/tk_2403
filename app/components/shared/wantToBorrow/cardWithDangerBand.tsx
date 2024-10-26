@@ -5,18 +5,17 @@ import DangerBand from '../dangerBand';
 type Props = {
 	houseName: string;
 	houseImgList: string[];
-	type: 'safe' | 'warn' | 'danger';
+	type: 'safe' | 'caution' | 'danger';
 	address: string;
 	intro: string;
 };
 
 export default function CardWithDangerBand({ houseName, houseImgList, type, address, intro }: Props) {
 	return (
-		<div>
+		<div className={css({ display: 'block', roundedTop: 'md', roundedBottom: 'xl', overflow: 'hidden' })}>
 			<DangerBand type={type} address={address} />
 			<div
 				className={css({
-					roundedBottom: 'xl',
 					py: '[15px]',
 					bg: 'white',
 				})}

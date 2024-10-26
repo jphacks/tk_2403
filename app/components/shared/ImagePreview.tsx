@@ -14,6 +14,7 @@ export default function ImagePreview({ houseImgList }: Props) {
 				src={nowImage}
 				alt=""
 				className={css({
+					objectFit: 'cover',
 					rounded: 'xl',
 					w: '[260px]',
 					h: '[260px]',
