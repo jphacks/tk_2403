@@ -6,6 +6,11 @@ export const buttonStyle = cva({
 		w: 'full',
 		py: '2',
 		fontWeight: 'bold',
+		_disabled: {
+			color: 'text.muted',
+			backgroundColor: 'border',
+			cursor: 'not-allowed',
+		},
 	},
 	variants: {
 		type: {

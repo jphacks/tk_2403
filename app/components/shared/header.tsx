@@ -1,13 +1,15 @@
-import { useRouter } from '@tanstack/react-router';
+import { Link, useRouter } from '@tanstack/react-router';
+import { FaPen } from 'react-icons/fa';
 import { RxCaretLeft } from 'react-icons/rx';
 import { css } from '../../../styled-system/css';
 
 type Props = {
 	title: string;
 	backToPage?: boolean;
+	to?: string;
 };
 
-export default function Header({ title, backToPage = false }: Props) {
+export default function Header({ title, backToPage = false, to }: Props) {
 	const router = useRouter();
 	return (
 		<div
@@ -31,14 +33,29 @@ export default function Header({ title, backToPage = false }: Props) {
 					onClick={() => router.history.back}
 					className={css({
 						position: 'absolute',
-						top: '1',
 						left: '3',
+						bottom: '1',
 						width: '10',
 						height: '10',
 						color: 'text.muted',
 						cursor: 'pointer',
 					})}
 				/>
+			)}
+			{to && (
+				<Link to={to}>
+					<FaPen
+						className={css({
+							position: 'absolute',
+							right: '6',
+							bottom: '3',
+							width: '5',
+							height: '5',
+							color: 'text.muted',
+							cursor: 'pointer',
+						})}
+					/>
+				</Link>
 			)}
 			<p
 				className={css({

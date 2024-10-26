@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { Link, createFileRoute } from '@tanstack/react-router';
 import { FiPlus } from 'react-icons/fi';
 import { css, cx } from '../../../../../styled-system/css';
 import Header from '../../../../components/shared/header';
@@ -23,7 +23,7 @@ function Host() {
 			})}
 		>
 			<Header title="Home" />
-			<div
+			<main
 				className={cx(
 					layoutStyle(),
 					css({
@@ -85,8 +85,10 @@ function Host() {
 						/>
 					)}
 					{list.length === 0 && (
-						<div
+						<Link
+							to="/host/place/create"
 							className={css({
+								display: 'block',
 								borderColor: 'text.muted',
 								rounded: 'md',
 								borderWidth: '[1px]',
@@ -110,10 +112,10 @@ function Host() {
 							>
 								提供場所を追加する
 							</p>
-						</div>
+						</Link>
 					)}
 				</div>
-			</div>
+			</main>
 			<HostNavbar />
 		</div>
 	);
