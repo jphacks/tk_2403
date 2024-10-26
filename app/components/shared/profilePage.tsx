@@ -1,22 +1,19 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { css } from '../../../../../styled-system/css';
-import ImagePreview from '../../../../components/shared/ImagePreview';
-import Header from '../../../../components/shared/header';
-import HostNavbar from '../../../../components/shared/hostNavbar';
-import ProfileBase from '../../../../components/shared/profileBase';
-import Subtitle from '../../../../components/subtitle';
-import { profileContainerStyle } from '../../../../styles/layout';
+import type { ReactNode } from 'react';
+import { css } from '../../../styled-system/css';
+import { profileContainerStyle } from '../../styles/layout';
+import type { Profile } from '../../types/profile';
+import Subtitle from '../subtitle';
+import ImagePreview from './ImagePreview';
+import Header from './header';
+import ProfileBase from './profileBase';
 
-export const Route = createFileRoute('/_authed/_registered/host/profile')({
-	loader: ({ context }) => {
-		return { profile: context.session.profile };
-	},
-	component: HostProfile,
-});
+type Props = {
+	profile: Profile;
+	editPath: string;
+	children: ReactNode;
+};
 
-function HostProfile() {
-	const { profile } = Route.useLoaderData();
-
+export function ProfilePage({ profile, editPath, children }: Props) {
 	return (
 		<div
 			className={css({
@@ -26,7 +23,7 @@ function HostProfile() {
 				bg: 'bg',
 			})}
 		>
-			<Header title="プロフィール" to="/profile/edit" />
+			<Header title="プロフィール" to={editPath} />
 			<div className={profileContainerStyle()}>
 				<div
 					className={css({
@@ -71,7 +68,7 @@ function HostProfile() {
 					</div>
 				</ProfileBase>
 			</div>
-			<HostNavbar />
+			{children}
 		</div>
 	);
 }
