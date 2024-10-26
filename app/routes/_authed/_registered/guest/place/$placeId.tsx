@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { css } from '../../../../../../styled-system/css';
+import HeaderWithStar from '../../../../../components/guestPage/headerWithStar';
 import ImagePreview from '../../../../../components/shared/ImagePreview';
-import Header from '../../../../../components/shared/header';
 import HostNavbar from '../../../../../components/shared/hostNavbar';
 import NotInputInfoRow from '../../../../../components/shared/notInputInfoRow';
 import ProfileBaseWithBtn from '../../../../../components/shared/profileBaseWithBtn';
@@ -20,7 +20,7 @@ function Page10() {
 				bg: 'bg',
 			})}
 		>
-			<Header title="釘崎家" />
+			<HeaderWithStar title="釘崎家" />
 			<div className={profileContainerStyle()}>
 				<div
 					className={css({
