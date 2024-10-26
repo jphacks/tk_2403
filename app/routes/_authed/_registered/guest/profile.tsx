@@ -21,7 +21,7 @@ function Page9() {
 				bg: 'bg',
 			})}
 		>
-			<Header title="釘崎家" />
+			<Header title="釘崎家" to="/" />
 			<div className={profileContainerStyle()}>
 				<div
 					className={css({
