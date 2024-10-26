@@ -7,9 +7,10 @@ type Props = {
 	placeholder?: string;
 	errors: ValidationError[];
 	onChange: (value: string) => void;
+	onBlur: () => void;
 };
 
-export const InfoRow = ({ label, value, placeholder, errors, onChange }: Props) => {
+export const InfoRow = ({ label, value, placeholder, errors, onChange, onBlur }: Props) => {
 	return (
 		<label
 			className={css({
@@ -42,6 +43,7 @@ export const InfoRow = ({ label, value, placeholder, errors, onChange }: Props) 
 					value={value}
 					placeholder={placeholder}
 					onChange={(e) => onChange(e.currentTarget.value)}
+					onBlur={onBlur}
 				/>
 			</div>
 			{errors.length > 0 && (

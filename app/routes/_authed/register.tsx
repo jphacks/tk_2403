@@ -4,8 +4,11 @@ import { useServerFn } from '@tanstack/start';
 import { zodValidator } from '@tanstack/zod-form-adapter';
 import { useState } from 'react';
 import { css } from '../../../styled-system/css';
+import ImagePreview from '../../components/imagePreview';
 import { InfoRow } from '../../components/shared/infoRow';
 import SelectInfoRow from '../../components/shared/selectInfoRow';
+import Subtitle from '../../components/subtitle';
+import Textarea from '../../components/textarea';
 import { createProfileSchema } from '../../schemas/profile';
 import { createProfileFn, getProfileFn } from '../../server/profile';
 import { containerStyle } from '../../styles/layout';
@@ -33,6 +36,7 @@ function Register() {
 			name: '',
 			gender: undefined,
 			dateOfBirth: '',
+			biography: '',
 		} as unknown as typeof createProfileSchema._input,
 		validatorAdapter: zodValidator(),
 		onSubmit: async ({ value }) => {
@@ -62,66 +66,90 @@ function Register() {
 						form.handleSubmit();
 					}
 				}}
+				className={css({ spaceY: '10' })}
 			>
+				<div className={css({ spaceY: '4' })}>
+					<Subtitle text="写真" />
+					<ImagePreview deleteMode={true} />
+				</div>
+
+				<div className={css({ spaceY: '4' })}>
+					<Subtitle text="基本情報" />
+					<div
+						className={css({
+							borderTopWidth: '1px',
+							borderColor: 'border',
+							width: 'full',
+							mb: '8',
+							backgroundColor: 'white',
+						})}
+					>
+						<form.Field name="name" validators={{ onChange: createProfileSchema.shape.name }}>
+							{(field) => (
+								<InfoRow
+									label="名前"
+									value={field.state.value}
+									placeholder="例: 山田 太郎"
+									errors={field.state.meta.errors}
+									onChange={(value) => field.handleChange(value)}
+									onBlur={field.handleBlur}
+								/>
+							)}
+						</form.Field>
+						<form.Field name="gender" validators={{ onChange: createProfileSchema.shape.gender }}>
+							{(field) => (
+								<SelectInfoRow
+									selectList={{ male: '男', female: '女', other: 'その他' }}
+									label="性別"
+									value={field.state.value}
+									errors={field.state.meta.errors}
+									onChange={(value) => field.handleChange(value)}
+									onBlur={field.handleBlur}
+								/>
+							)}
+						</form.Field>
+						<form.Field name="dateOfBirth" validators={{ onChange: createProfileSchema.shape.dateOfBirth }}>
+							{(field) => (
+								<InfoRow
+									label="生年月日"
+									value={field.state.value}
+									placeholder="例: 2000-01-01"
+									errors={field.state.meta.errors}
+									onChange={(value) => field.handleChange(value)}
+									onBlur={field.handleBlur}
+								/>
+							)}
+						</form.Field>
+					</div>
+				</div>
+
 				<div
 					className={css({
-						borderTopWidth: '1px',
-						borderColor: 'border',
-						width: 'full',
-						mb: '8',
-						backgroundColor: 'white',
+						display: 'flex',
+						flexDirection: 'column',
+						spaceY: '4',
 					})}
 				>
-					<form.Field name="name" validators={{ onChange: createProfileSchema.shape.name }}>
+					<Subtitle text="自己紹介" />
+
+					<form.Field name="biography" validators={{ onChange: createProfileSchema.shape.biography }}>
 						{(field) => (
-							<InfoRow
-								label="名前"
-								value={field.state.value}
-								placeholder="例: 山田 太郎"
-								errors={field.state.meta.errors}
-								onChange={(value) => field.handleChange(value)}
-							/>
-						)}
-					</form.Field>
-					<form.Field name="gender" validators={{ onChange: createProfileSchema.shape.gender }}>
-						{(field) => (
-							<SelectInfoRow
-								selectList={{ male: '男', female: '女', other: 'その他' }}
-								label="性別"
+							<Textarea
+								placeholder="自己紹介を入力してください..."
 								value={field.state.value}
 								errors={field.state.meta.errors}
 								onChange={(value) => field.handleChange(value)}
-							/>
-						)}
-					</form.Field>
-					<form.Field name="dateOfBirth" validators={{ onChange: createProfileSchema.shape.dateOfBirth }}>
-						{(field) => (
-							<InfoRow
-								label="生年月日"
-								value={field.state.value}
-								placeholder="例: 2000-01-01"
-								errors={field.state.meta.errors}
-								onChange={(value) => field.handleChange(value)}
+								onBlur={field.handleBlur}
 							/>
 						)}
 					</form.Field>
 				</div>
+
 				<div
 					className={css({
 						width: 'full',
 					})}
 				>
-					<p
-						className={css({
-							mb: '[120px]',
-							paddingLeft: '2',
-							color: 'text.muted',
-							fontSize: 'sm',
-						})}
-					>
-						この設定は後から変更可能です。
-					</p>
-
 					<label
 						className={css({
 							display: 'flex',
@@ -191,12 +219,14 @@ function Register() {
 									borderRadius: 'md',
 									width: 'full',
 									padding: '3',
-									color: 'text.muted',
+									color: 'white',
 									fontSize: 'sm',
 									fontWeight: 'bold',
-									backgroundColor: 'border',
+									backgroundColor: 'primary',
 									cursor: 'pointer',
 									_disabled: {
+										color: 'text.muted',
+										backgroundColor: 'border',
 										cursor: 'not-allowed',
 									},
 								})}
