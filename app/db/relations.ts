@@ -13,10 +13,6 @@ export const evacuationPlaceRelations = relations(evacuationPlaceTable, ({ one, 
 		fields: [evacuationPlaceTable.profileId],
 		references: [profileTable.userId],
 	}),
-	area: one(areaTable, {
-		fields: [evacuationPlaceTable.areaId],
-		references: [areaTable.id],
-	}),
 	requests: many(requestTable),
 	favorites: many(favoriteEvacuationPlaceTable),
 }));
