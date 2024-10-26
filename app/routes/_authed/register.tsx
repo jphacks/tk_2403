@@ -4,7 +4,7 @@ import { useServerFn } from '@tanstack/start';
 import { zodValidator } from '@tanstack/zod-form-adapter';
 import { useState } from 'react';
 import { css } from '../../../styled-system/css';
-import ImagePreview from '../../components/imagePreview';
+import ImageInput from '../../components/imageInput';
 import { InfoRow } from '../../components/shared/infoRow';
 import SelectInfoRow from '../../components/shared/selectInfoRow';
 import Subtitle from '../../components/subtitle';
@@ -12,6 +12,7 @@ import Textarea from '../../components/textarea';
 import { createProfileSchema } from '../../schemas/profile';
 import { createProfileFn, getProfileFn } from '../../server/profile';
 import { containerStyle } from '../../styles/layout';
+import type { Image } from '../../types/image';
 
 export const Route = createFileRoute('/_authed/register')({
 	loader: async ({ context }) => {
@@ -19,6 +20,8 @@ export const Route = createFileRoute('/_authed/register')({
 		if (profile !== undefined) {
 			throw redirect({ to: '/' });
 		}
+
+		return { session: context.session };
 	},
 	component: Register,
 });
@@ -26,6 +29,8 @@ export const Route = createFileRoute('/_authed/register')({
 function Register() {
 	const router = useRouter();
 
+	const [pictures, setPictures] = useState<Image[]>([]);
+	const [showPicturesError, setShowPicturesError] = useState(false);
 	const [ageConfirmed, setAgeConfirmed] = useState(false);
 	const [termsAgreed, setTermsAgreed] = useState(false);
 
@@ -37,10 +42,13 @@ function Register() {
 			gender: undefined,
 			dateOfBirth: '',
 			biography: '',
-		} as unknown as typeof createProfileSchema._input,
+		} as unknown as Omit<typeof createProfileSchema._input, 'pictures'>,
 		validatorAdapter: zodValidator(),
 		onSubmit: async ({ value }) => {
-			await createProfile(value);
+			if (pictures.length === 0) {
+				return;
+			}
+			await createProfile({ ...value, pictures });
 			await router.invalidate();
 		},
 	});
@@ -65,12 +73,37 @@ function Register() {
 					if (ageConfirmed && termsAgreed && form.state.canSubmit && !form.state.isSubmitting) {
 						form.handleSubmit();
 					}
+					if (pictures.length === 0) {
+						setShowPicturesError(true);
+					}
 				}}
 				className={css({ spaceY: '10' })}
 			>
 				<div className={css({ spaceY: '4' })}>
 					<Subtitle text="写真" />
-					<ImagePreview deleteMode={true} />
+					<div className={css({ spaceY: '2' })}>
+						<ImageInput
+							onChange={({ newImages }) => {
+								setPictures(newImages);
+								if (newImages.length === 0) {
+									setShowPicturesError(true);
+								} else {
+									setShowPicturesError(false);
+								}
+							}}
+						/>
+						{showPicturesError && (
+							<p
+								className={css({
+									px: '3',
+									color: 'alert',
+									fontSize: 'xs',
+								})}
+							>
+								写真を1枚以上追加してください。
+							</p>
+						)}
+					</div>
 				</div>
 
 				<div className={css({ spaceY: '4' })}>
@@ -230,7 +263,7 @@ function Register() {
 										cursor: 'not-allowed',
 									},
 								})}
-								disabled={!ageConfirmed || !termsAgreed || !canSubmit || isSubmitting}
+								disabled={!ageConfirmed || !termsAgreed || showPicturesError || !canSubmit || isSubmitting}
 							>
 								二次待避くんをはじめる
 							</button>
