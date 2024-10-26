@@ -7,4 +7,4 @@ export const db = drizzle({
 	schema: { ...schema, ...relations },
 });
 
-export type DB = typeof db;
+export type DB = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];

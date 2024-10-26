@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import type { DB } from '../db/client';
 import { evacuationPlaceTable, favoriteEvacuationPlaceTable, requestTable } from '../db/schema';
-import type { CreateEvacuationPlaceValue } from '../types/evacuationPlace';
+import type { CreateEvacuationPlaceValue, UpdateEvacuationPlaceValue } from '../types/evacuationPlace';
 
 export async function getEvacuationPlace(db: DB, authUserId: string, filter: { id: number }) {
 	const data = await db.query.evacuationPlaceTable.findFirst({
@@ -38,4 +38,9 @@ export async function getEvacuationPlaceByUserId(db: DB, filter: { userId: strin
 export async function createEvacuationPlace(db: DB, value: CreateEvacuationPlaceValue) {
 	const [place] = await db.insert(evacuationPlaceTable).values(value).returning();
 	return place!;
+}
+
+export async function updateEvacuationPlace(db: DB, id: number, value: UpdateEvacuationPlaceValue) {
+	const [place] = await db.update(evacuationPlaceTable).set(value).where(eq(evacuationPlaceTable.id, id)).returning();
+	return place;
 }
