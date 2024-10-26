@@ -30,12 +30,12 @@ export const createEvacuationPlaceFn = createServerFn(
 			}),
 		);
 
-		const profile = await createEvacuationPlace(db, {
+		const place = await createEvacuationPlace(db, {
 			profileId: user.id,
 			...value,
 			address: formattedAddress,
 			picturePaths,
 		});
-		return { profile };
+		return { place };
 	}),
 );
