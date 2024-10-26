@@ -1,5 +1,5 @@
 import { useForm } from '@tanstack/react-form';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
 import { useServerFn } from '@tanstack/start';
 import { zodValidator } from '@tanstack/zod-form-adapter';
 import { useState } from 'react';
@@ -10,12 +10,18 @@ import SelectInfoRow from '../../../../../components/shared/selectInfoRow';
 import Subtitle from '../../../../../components/subtitle';
 import Textarea from '../../../../../components/textarea';
 import { createEvacuationPlaceSchema } from '../../../../../schemas/evacuationPlace';
-import { createEvacuationPlaceFn } from '../../../../../server/evacuationPlace';
+import { createEvacuationPlaceFn, getMyEvacuationPlaceFn } from '../../../../../server/evacuationPlace';
 import { buttonStyle } from '../../../../../styles/button';
 import { containerStyle } from '../../../../../styles/layout';
 import type { Image } from '../../../../../types/image';
 
 export const Route = createFileRoute('/_authed/_registered/host/place/create')({
+	loader: async () => {
+		const place = await getMyEvacuationPlaceFn();
+		if (place !== undefined) {
+			throw redirect({ to: '/host/place' });
+		}
+	},
 	component: CreatePlace,
 });
 
