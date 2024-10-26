@@ -3,7 +3,7 @@ import { db } from '../db/client';
 import { getAreas } from '../repos/area';
 import { createEvacuationPlace, getEvacuationPlace, getEvacuationPlaceByUserId } from '../repos/evacuationPlace';
 import { getFormattedAddress } from '../repos/geocoding';
-import { uploadImage } from '../repos/image';
+import { getImagePublicUrl, uploadImage } from '../repos/image';
 import { createEvacuationPlaceSchema, getEvacuationPlaceSchema } from '../schemas/evacuationPlace';
 import { serverZodValidator } from '../utils/server';
 import { getSupabaseServerClient } from '../utils/supabase';
@@ -69,6 +69,12 @@ export const createEvacuationPlaceFn = createServerFn(
 				return path;
 			}),
 		);
+		const pictureUrls = await Promise.all(
+			picturePaths.map(async (path) => {
+				const url = await getImagePublicUrl(supabase, path);
+				return url;
+			}),
+		);
 
 		const place = await createEvacuationPlace(db, {
 			profileId: user.id,
@@ -76,6 +82,7 @@ export const createEvacuationPlaceFn = createServerFn(
 			address: formattedAddress,
 			maxHeadcount: Number.parseInt(value.maxHeadcount),
 			picturePaths,
+			pictureUrls,
 		});
 		return { place };
 	}),

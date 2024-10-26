@@ -10,7 +10,8 @@ export const profileTable = pgTable('profile', {
 	biography: text('biography').notNull(),
 	gender: genderEnum('gender').notNull(),
 	dateOfBirth: text('date_of_birth').notNull(), // YYYY-MM-DD
-	picturePaths: text('picture_paths').notNull().array(),
+	picturePaths: text('picture_paths').array().notNull(),
+	pictureUrls: text('picture_urls').array().notNull(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at')
 		.defaultNow()
@@ -25,7 +26,8 @@ export const evacuationPlaceTable = pgTable('evacuation_place', {
 		.unique()
 		.references(() => profileTable.userId),
 	description: text('description').notNull(),
-	picturePaths: text('picture_paths').notNull().array(),
+	picturePaths: text('picture_paths').array().notNull(),
+	pictureUrls: text('picture_urls').array().notNull(),
 	address: text('address').notNull(),
 	maxHeadcount: integer('max_headcount').notNull(),
 	availablePeriodStart: text('available_period_start').notNull(), // YYYY-MM
