@@ -8,10 +8,15 @@ import Subtitle from '../../../../components/subtitle';
 import { profileContainerStyle } from '../../../../styles/layout';
 
 export const Route = createFileRoute('/_authed/_registered/guest/profile')({
-	component: Page9,
+	loader: ({ context }) => {
+		return { profile: context.session.profile };
+	},
+	component: GuestProfile,
 });
 
-function Page9() {
+function GuestProfile() {
+	const { profile } = Route.useLoaderData();
+
 	return (
 		<div
 			className={css({
@@ -21,18 +26,18 @@ function Page9() {
 				bg: 'bg',
 			})}
 		>
-			<Header title="釘崎家" to="/" />
+			<Header title="プロフィール" to="/profile/edit" />
 			<div className={profileContainerStyle()}>
 				<div
 					className={css({
 						py: '[30px]',
 					})}
 				>
-					<ImagePreview
-						houseImgList={['https://picsum.photos/id/253/200/300', 'https://picsum.photos/id/299/200/300']}
-					/>
+					<ImagePreview houseImgList={profile.pictureUrls} />
 				</div>
-				<ProfileBase text="高井正人">
+				<ProfileBase
+					text={`${profile.name}・${profile.dateOfBirth.split('-')[0]}年生まれ${profile.gender !== 'other' ? `・${profile.gender === 'male' ? '男' : '女'}` : ''}`}
+				>
 					<div
 						style={{
 							flex: '1',
@@ -60,7 +65,7 @@ function Page9() {
 									fontSize: 'sm',
 								})}
 							>
-								こんばんは
+								{profile.biography}
 							</p>
 						</div>
 					</div>
