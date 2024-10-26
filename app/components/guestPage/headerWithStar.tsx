@@ -33,7 +33,7 @@ export default function HeaderWithStar({ title }: Props) {
 						bottom: '4',
 						width: '5',
 						height: '5',
-						color: 'text.muted',
+						color: 'warn',
 						cursor: 'pointer',
 					})}
 				/>
