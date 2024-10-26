@@ -23,7 +23,7 @@ function Page16() {
 				bg: 'bg',
 			})}
 		>
-			<Header title="高位聡" />
+			<Header title="高位聡" backToPage={true} to="/host/place/create" />
 			<div className={profileContainerStyle()}>
 				<div
 					className={css({
