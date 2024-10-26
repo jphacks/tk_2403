@@ -9,7 +9,7 @@ export const profileTable = pgTable('profile', {
 	userId: text('user_id').primaryKey(),
 	name: text('name').notNull(),
 	gender: genderEnum('gender').notNull(),
-	dateOfBirth: timestamp('date_of_birth').notNull(),
+	dateOfBirth: text('date_of_birth').notNull(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at')
 		.defaultNow()
