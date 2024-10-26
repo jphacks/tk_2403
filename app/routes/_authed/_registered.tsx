@@ -8,7 +8,7 @@ export const Route = createFileRoute('/_authed/_registered')({
 			throw redirect({ to: '/register' });
 		}
 
-		return { session: { profile } };
+		return { session: { ...context.session, profile } };
 	},
 	component: Registered,
 });

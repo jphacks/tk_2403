@@ -1,5 +1,5 @@
 import { useForm } from '@tanstack/react-form';
-import { createFileRoute, redirect, useRouter } from '@tanstack/react-router';
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
 import { useServerFn } from '@tanstack/start';
 import { zodValidator } from '@tanstack/zod-form-adapter';
 import { useState } from 'react';
@@ -11,6 +11,7 @@ import Subtitle from '../../components/subtitle';
 import Textarea from '../../components/textarea';
 import { createProfileSchema } from '../../schemas/profile';
 import { createProfileFn, getProfileFn } from '../../server/profile';
+import { buttonStyle } from '../../styles/button';
 import { containerStyle } from '../../styles/layout';
 import type { Image } from '../../types/image';
 
@@ -27,7 +28,7 @@ export const Route = createFileRoute('/_authed/register')({
 });
 
 function Register() {
-	const router = useRouter();
+	const navigate = useNavigate();
 
 	const [pictures, setPictures] = useState<Image[]>([]);
 	const [showPicturesError, setShowPicturesError] = useState(false);
@@ -39,17 +40,17 @@ function Register() {
 	const form = useForm({
 		defaultValues: {
 			name: '',
-			gender: undefined,
+			gender: undefined as unknown as 'male' | 'female' | 'other',
 			dateOfBirth: '',
 			biography: '',
-		} as unknown as Omit<typeof createProfileSchema._input, 'pictures'>,
+		},
 		validatorAdapter: zodValidator(),
 		onSubmit: async ({ value }) => {
 			if (pictures.length === 0) {
 				return;
 			}
 			await createProfile({ ...value, pictures });
-			await router.invalidate();
+			await navigate({ to: '/' });
 		},
 	});
 
@@ -95,7 +96,6 @@ function Register() {
 						{showPicturesError && (
 							<p
 								className={css({
-									px: '3',
 									color: 'alert',
 									fontSize: 'xs',
 								})}
@@ -164,7 +164,6 @@ function Register() {
 					})}
 				>
 					<Subtitle text="自己紹介" />
-
 					<form.Field name="biography" validators={{ onChange: createProfileSchema.shape.biography }}>
 						{(field) => (
 							<Textarea
@@ -247,22 +246,7 @@ function Register() {
 						{([canSubmit, isSubmitting]) => (
 							<button
 								type="submit"
-								className={css({
-									border: 'none',
-									borderRadius: 'md',
-									width: 'full',
-									padding: '3',
-									color: 'white',
-									fontSize: 'sm',
-									fontWeight: 'bold',
-									backgroundColor: 'primary',
-									cursor: 'pointer',
-									_disabled: {
-										color: 'text.muted',
-										backgroundColor: 'border',
-										cursor: 'not-allowed',
-									},
-								})}
+								className={buttonStyle({ type: 'normal' })}
 								disabled={!ageConfirmed || !termsAgreed || showPicturesError || !canSubmit || isSubmitting}
 							>
 								二次待避くんをはじめる

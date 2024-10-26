@@ -1,0 +1,1 @@
+ALTER TABLE "evacuation_place" DROP COLUMN IF EXISTS "name";
