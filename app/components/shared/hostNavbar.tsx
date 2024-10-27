@@ -19,7 +19,7 @@ const navItems: NavItem[] = [
 	},
 	{
 		name: 'リクエスト',
-		href: '/host/search',
+		href: '/host/requests',
 		activeForSubPath: true,
 		icon: FiFileText,
 	},

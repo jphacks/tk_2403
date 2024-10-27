@@ -1,29 +1,39 @@
+import { Link } from '@tanstack/react-router';
 import { css } from '../../../../styled-system/css';
 
 type Props = {
+	requestId: number;
 	houseName: string;
 	houseImgList: string[];
 	intro: string;
 };
 
-export default function Card({ houseName, houseImgList, intro }: Props) {
+export default function Card({ requestId, houseName, houseImgList, intro }: Props) {
 	return (
-		<div
+		<Link
+			to="/host/requests/$requestId"
+			params={{ requestId: requestId.toString() }}
 			className={css({
+				display: 'block',
 				rounded: 'xl',
 				py: '[15px]',
 				bg: 'white',
 			})}
 		>
-			<h2
+			<div
 				className={css({
 					mb: '[15px]',
 					px: '[15px]',
-					fontSize: '[16px]',
 				})}
 			>
-				{houseName}
-			</h2>
+				<h2
+					className={css({
+						fontSize: '[16px]',
+					})}
+				>
+					{houseName}
+				</h2>
+			</div>
 			<div
 				className={css({
 					display: 'flex',
@@ -35,7 +45,7 @@ export default function Card({ houseName, houseImgList, intro }: Props) {
 			>
 				{houseImgList.map((houseImg, i) => (
 					<img
-						// biome-ignore lint/suspicious/noArrayIndexKey:
+						// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 						key={i}
 						src={houseImg}
 						alt=""
@@ -59,6 +69,6 @@ export default function Card({ houseName, houseImgList, intro }: Props) {
 			>
 				{intro}
 			</p>
-		</div>
+		</Link>
 	);
 }

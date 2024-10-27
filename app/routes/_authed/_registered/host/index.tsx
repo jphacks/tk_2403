@@ -9,6 +9,7 @@ import CardWithDangerBandAndStar from '../../../../components/shared/wantToLend/
 import Subtitle from '../../../../components/subtitle';
 import { getMyEvacuationPlaceFnQueryKey } from '../../../../query/evacuationPlace';
 import { getMyEvacuationPlaceFn } from '../../../../server/evacuationPlace';
+import { getRecievedRequestsFn } from '../../../../server/request';
 import { layoutStyle } from '../../../../styles/layout';
 import { serverFnQuery } from '../../../../utils/client';
 
@@ -22,12 +23,15 @@ export const Route = createFileRoute('/_authed/_registered/host/')({
 				queryFn: (fn) => fn(),
 			}),
 		);
+		const requests = await getRecievedRequestsFn();
+		return { requests };
 	},
 	component: Host,
 });
 
 function Host() {
-	const list = [];
+	const { requests } = Route.useLoaderData();
+	const approvedRequests = requests.filter((request) => request.status === 'approved');
 	const myEvacuationPlaceQuery = getMyEvacuationPlaceFnQuery.useQuery({
 		queryKey: getMyEvacuationPlaceFnQueryKey,
 		queryFn: (fn) => fn(),
@@ -59,24 +63,24 @@ function Host() {
 					<SaftyofLevelColumn type="permit" text="安全" address="東京都千代田区丸の内1丁目1-1" />
 				</div>
 
-				{list.length > 0 && (
+				{approvedRequests.length > 0 && (
 					<div>
 						<div
 							className={css({
 								mb: '[15px]',
 							})}
 						>
-							<Subtitle text="認証済の家族" />
+							<Subtitle text="マッチングした避難者" />
 						</div>
-						<Card
-							houseName="釘崎け"
-							houseImgList={[
-								'https://placehold.jp/150x150.png',
-								'https://placehold.jp/150x150.png',
-								'https://placehold.jp/150x150.png',
-							]}
-							intro="初めまして、とみたです。よろしくお願いします。"
-						/>
+						{approvedRequests.map((request) => (
+							<Card
+								key={request.id}
+								requestId={request.id}
+								houseName={request.profile.name}
+								houseImgList={request.profile.pictureUrls}
+								intro={request.profile.biography}
+							/>
+						))}
 					</div>
 				)}
 
@@ -86,7 +90,7 @@ function Host() {
 							mb: '[15px]',
 						})}
 					>
-						<Subtitle text="退避場所" />
+						<Subtitle text="提供する退避場所" />
 					</div>
 					{myEvacuationPlaceQuery.data !== undefined ? (
 						<CardWithDangerBandAndStar

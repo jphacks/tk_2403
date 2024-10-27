@@ -1,6 +1,8 @@
+import { notFound } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/start';
 import { db } from '../db/client';
 import { getAreas } from '../repos/area';
+import { getEvacuationPlaceByUserId } from '../repos/evacuationPlace';
 import {} from '../repos/image';
 import {} from '../repos/profile';
 import {
@@ -8,6 +10,7 @@ import {
 	deleteRequest,
 	getRequest,
 	getRequestByGuestAndPlace,
+	getRequestByPlaceId,
 	getUserRequests,
 	updateRequest,
 } from '../repos/request';
@@ -15,6 +18,7 @@ import {
 	approveRequestSchema,
 	cancelRequestSchema,
 	createRequestSchema,
+	getRequestsSchema,
 	rejectRequestSchema,
 } from '../schemas/request';
 import { serverZodValidator } from '../utils/server';
@@ -34,6 +38,40 @@ export const getMyRequestsFn = createServerFn('GET', async () => {
 		area: areas.find((area) => request.evacuationPlace.address.startsWith(area.address)),
 	}));
 });
+
+export const getRecievedRequestsFn = createServerFn('GET', async () => {
+	const user = await getAuthUserFn();
+	if (user === null) {
+		throw new Error('Unauthorized');
+	}
+
+	const place = await getEvacuationPlaceByUserId(db, { userId: user.id });
+	if (place === undefined) {
+		return [];
+	}
+
+	const requests = await getRequestByPlaceId(db, { evacuationPlaceId: place.id });
+	return requests;
+});
+
+export const getRequestFn = createServerFn(
+	'GET',
+	serverZodValidator(getRequestsSchema, async ({ requestId }) => {
+		const user = await getAuthUserFn();
+		if (user === null) {
+			throw new Error('Unauthorized');
+		}
+
+		const request = await getRequest(db, { requestId });
+		if (request === undefined) {
+			throw notFound();
+		}
+		if (request.evacuationPlace.profileId !== user.id) {
+			throw new Error('Forbidden');
+		}
+		return request;
+	}),
+);
 
 export const createRequestFn = createServerFn(
 	'POST',

@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+export const getRequestsSchema = z.object({
+	requestId: z.number(),
+});
+
 export const createRequestSchema = z.object({
 	evacuationPlaceId: z.number(),
 });

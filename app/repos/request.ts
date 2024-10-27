@@ -31,6 +31,14 @@ export async function getUserRequests(db: DB, authUserId, filter: { userId: stri
 	});
 }
 
+export async function getRequestByPlaceId(db: DB, filter: { evacuationPlaceId: number }) {
+	const requests = await db.query.requestTable.findMany({
+		with: { evacuationPlace: true, profile: true },
+		where: eq(requestTable.evacuationPlaceId, filter.evacuationPlaceId),
+	});
+	return requests;
+}
+
 export async function getRequest(db: DB, filter: { requestId: number }) {
 	const request = await db.query.requestTable.findFirst({
 		with: { evacuationPlace: true, profile: true },
