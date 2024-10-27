@@ -7,26 +7,31 @@ import SaftyofLevelColumn from '../../../../components/shared/saftyOfLevelColumn
 import Card from '../../../../components/shared/wantToLend/card';
 import CardWithDangerBandAndStar from '../../../../components/shared/wantToLend/cardWithDangerBandAndStar';
 import Subtitle from '../../../../components/subtitle';
+import { getMyEvacuationPlaceFnQueryKey } from '../../../../query/evacuationPlace';
 import { getMyEvacuationPlaceFn } from '../../../../server/evacuationPlace';
 import { layoutStyle } from '../../../../styles/layout';
-import { serverFnQueryWrapper } from '../../../../utils/client';
+import { serverFnQuery } from '../../../../utils/client';
 
-const myEvacuationPlaceQueryWrapper = serverFnQueryWrapper({
-	queryKey: ['evacuationPlace', 'mine'],
-	serverFn: getMyEvacuationPlaceFn,
-	queryFn: (fn) => fn(),
-});
+const getMyEvacuationPlaceFnQuery = serverFnQuery(getMyEvacuationPlaceFn);
 
 export const Route = createFileRoute('/_authed/_registered/host/')({
 	loader: async ({ context }) => {
-		await context.queryClient.prefetchQuery(myEvacuationPlaceQueryWrapper.serverQueryOptions);
+		await context.queryClient.prefetchQuery(
+			getMyEvacuationPlaceFnQuery.serverQueryOptions({
+				queryKey: getMyEvacuationPlaceFnQueryKey,
+				queryFn: (fn) => fn(),
+			}),
+		);
 	},
 	component: Host,
 });
 
 function Host() {
 	const list = [];
-	const myEvacuationPlaceQuery = myEvacuationPlaceQueryWrapper.useQuery();
+	const myEvacuationPlaceQuery = getMyEvacuationPlaceFnQuery.useQuery({
+		queryKey: getMyEvacuationPlaceFnQueryKey,
+		queryFn: (fn) => fn(),
+	});
 
 	return (
 		<div

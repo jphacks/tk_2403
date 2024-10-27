@@ -1,7 +1,65 @@
-import { eq } from 'drizzle-orm';
+import { and, desc, eq, gte, like, lte } from 'drizzle-orm';
 import type { DB } from '../db/client';
-import { evacuationPlaceTable, favoriteEvacuationPlaceTable, requestTable } from '../db/schema';
+import { evacuationPlaceTable, favoriteEvacuationPlaceTable, profileTable, requestTable } from '../db/schema';
 import type { CreateEvacuationPlaceValue, UpdateEvacuationPlaceValue } from '../types/evacuationPlace';
+
+export async function getEvacuationPlaces(
+	db: DB,
+	authUserId: string,
+	filter: {
+		headcount?: number;
+		areaAddress?: string;
+		desiredPeriodStart?: string;
+		desiredPeriodEnd?: string;
+		hasPet: boolean;
+		needBarrierFree: boolean;
+		hostGender?: 'male' | 'female' | 'other';
+	},
+) {
+	const values = await db
+		.select({
+			evacuvationPlace: evacuationPlaceTable,
+			profile: profileTable,
+			favoriteId: favoriteEvacuationPlaceTable.id,
+			requestStatus: requestTable.status,
+		})
+		.from(evacuationPlaceTable)
+		.innerJoin(profileTable, eq(profileTable.userId, evacuationPlaceTable.profileId))
+		.leftJoin(
+			favoriteEvacuationPlaceTable,
+			and(
+				eq(favoriteEvacuationPlaceTable.evacuationPlaceId, evacuationPlaceTable.id),
+				eq(favoriteEvacuationPlaceTable.profileId, authUserId),
+			),
+		)
+		.leftJoin(
+			requestTable,
+			and(eq(requestTable.evacuationPlaceId, evacuationPlaceTable.id), eq(requestTable.profileId, authUserId)),
+		)
+		.where(
+			and(
+				filter.headcount !== undefined ? gte(evacuationPlaceTable.maxHeadcount, filter.headcount) : undefined,
+				filter.areaAddress !== undefined ? like(evacuationPlaceTable.address, `${filter.areaAddress}%`) : undefined,
+				filter.desiredPeriodStart !== undefined
+					? lte(evacuationPlaceTable.availablePeriodStart, filter.desiredPeriodStart)
+					: undefined,
+				filter.desiredPeriodEnd !== undefined
+					? gte(evacuationPlaceTable.availablePeriodEnd, filter.desiredPeriodEnd)
+					: undefined,
+				filter.hasPet ? eq(evacuationPlaceTable.petAllowed, true) : undefined,
+				filter.needBarrierFree ? eq(evacuationPlaceTable.barrierFree, true) : undefined,
+				filter.hostGender !== undefined ? eq(profileTable.gender, filter.hostGender) : undefined,
+			),
+		)
+		.orderBy(desc(evacuationPlaceTable.createdAt));
+
+	return values.map((value) => ({
+		...value.evacuvationPlace,
+		profile: value.profile,
+		isFavorite: value.favoriteId !== null,
+		requestStatus: value.requestStatus,
+	}));
+}
 
 export async function getEvacuationPlace(db: DB, authUserId: string, filter: { id: number }) {
 	const data = await db.query.evacuationPlaceTable.findFirst({

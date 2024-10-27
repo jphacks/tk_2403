@@ -5,6 +5,7 @@ import {
 	createEvacuationPlace,
 	getEvacuationPlace,
 	getEvacuationPlaceByUserId,
+	getEvacuationPlaces,
 	updateEvacuationPlace,
 } from '../repos/evacuationPlace';
 import { getFormattedAddress } from '../repos/geocoding';
@@ -12,11 +13,34 @@ import { deleteImages, getImagePublicUrl, uploadImage } from '../repos/image';
 import {
 	createEvacuationPlaceSchema,
 	getEvacuationPlaceSchema,
+	getEvacuationPlacesSchema,
 	updateEvacuationPlaceSchema,
 } from '../schemas/evacuationPlace';
 import { serverZodValidator } from '../utils/server';
 import { getSupabaseServerClient } from '../utils/supabase';
 import { getAuthUserFn } from './auth';
+
+export const getEvacuationPlacesFn = createServerFn(
+	'GET',
+	serverZodValidator(getEvacuationPlacesSchema, async (filter) => {
+		const user = await getAuthUserFn();
+		if (user === null) {
+			throw new Error('Unauthorized');
+		}
+		const values = await getEvacuationPlaces(db, user.id, {
+			...filter,
+			headcount: filter.headcount !== undefined ? Number.parseInt(filter.headcount) : undefined,
+		});
+
+		const areas = await getAreas(db);
+		return values
+			.map((value) => ({
+				...value,
+				area: areas.find((area) => value.address.startsWith(area.address)),
+			}))
+			.filter((value) => (filter.safety === undefined ? true : (value.area?.safety ?? 'safe') === filter.safety));
+	}),
+);
 
 export const getEvacuationPlaceFn = createServerFn(
 	'GET',
