@@ -61,7 +61,11 @@ https://github.com/user-attachments/assets/f9da2071-669d-461f-b4b5-a09315663b71
 
 #### API・データ
 
+- Supabase Auth
+- Supabase Storage
+- Google OAuth
 - Google Map API
+- Geolocation (ブラウザ)
 
 #### フレームワーク・ライブラリ・モジュール
 
@@ -77,5 +81,11 @@ https://github.com/user-attachments/assets/f9da2071-669d-461f-b4b5-a09315663b71
 
 #### ハッカソンで開発した独自機能・技術
 
-- 独自で開発したものの内容をこちらに記載してください
-- 特に力を入れた部分をファイルリンク、またはcommit_idを記載してください。
+- 型安全に開発を進めるため、独自のバリデーションユーティリティやTanstack Queryのラッパーなどを実装しました。
+  - https://github.com/jphacks/tk_2403/blob/main/app/utils/client.ts
+  - https://github.com/jphacks/tk_2403/blob/main/app/utils/server.ts
+- Google Map APIを利用して住所を正規化して記録することで、エリアごとの安全度の設定、エリアや安全度などでの検索を実現しました。
+  - https://github.com/jphacks/tk_2403/blob/main/app/repos/geocoding.ts
+  - https://github.com/jphacks/tk_2403/blob/main/app/server/evacuationPlace.ts
+- ブラウザのGeolocation APIとGoogle Map APIを組み合わせ、現在位置の安全度を確認できる機能を実装しました。
+  - https://github.com/jphacks/tk_2403/pull/79
