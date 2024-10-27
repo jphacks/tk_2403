@@ -8,8 +8,6 @@ type Props = {
 };
 
 export default function SaftyofLevelColumn({ address, type, text }: Props) {
-	const truncatedAddress = address.length > 10 ? `${address.slice(0, 10)}...` : address;
-
 	return (
 		<div
 			className={css({
@@ -21,7 +19,9 @@ export default function SaftyofLevelColumn({ address, type, text }: Props) {
 				bg: 'white',
 			})}
 		>
-			<p>{truncatedAddress}</p>
+			<p className={css({ flex: '1', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' })}>
+				{address}
+			</p>
 			<Tag type={type} text={text} />
 		</div>
 	);

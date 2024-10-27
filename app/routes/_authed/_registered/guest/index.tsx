@@ -1,4 +1,6 @@
+import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
+import { useServerFn } from '@tanstack/start';
 import { css, cx } from '../../../../../styled-system/css';
 import Header from '../../../../components/shared/header';
 import SaftyofLevelColumn from '../../../../components/shared/saftyOfLevelColumn';
@@ -6,8 +8,10 @@ import UserNavbar from '../../../../components/shared/userNavbar';
 import CardWithDangerBand from '../../../../components/shared/wantToBorrow/cardWithDangerBand';
 import Subtitle from '../../../../components/subtitle';
 import { getFavoritesFnQueryKey } from '../../../../query/favorite';
+import { locationDataQueryKey } from '../../../../query/geocoding';
 import { getMyRequestsFnQueryKey } from '../../../../query/request';
 import { getFavoritesFn } from '../../../../server/favorite';
+import { getLocationDataFn } from '../../../../server/geocoding';
 import { getMyRequestsFn } from '../../../../server/request';
 import { layoutStyle } from '../../../../styles/layout';
 import { serverFnQuery } from '../../../../utils/client';
@@ -45,6 +49,25 @@ function Guset() {
 		queryKey: getFavoritesFnQueryKey,
 		queryFn: (fn) => fn(),
 	});
+	const getLocationData = useServerFn(getLocationDataFn);
+	const locationDataQuery = useQuery({
+		queryKey: locationDataQueryKey,
+		queryFn: async () => {
+			const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+				navigator.geolocation.getCurrentPosition(resolve, reject, {
+					enableHighAccuracy: true,
+					timeout: 5000,
+					maximumAge: 0,
+				});
+			});
+			return await getLocationData({ lat: position.coords.latitude, lng: position.coords.longitude });
+		},
+	});
+	const safetyMap = {
+		safe: { type: 'permit', label: '安全' } as const,
+		caution: { type: 'beforePermit', label: '少し危険' } as const,
+		danger: { type: 'reject', label: '危険' } as const,
+	};
 
 	return (
 		<div
@@ -70,7 +93,17 @@ function Guset() {
 					>
 						<Subtitle text="今いる場所の安全度" />
 					</div>
-					<SaftyofLevelColumn type="permit" text="危険" address="東京都千代田区丸の内1丁目1-1" />
+					{locationDataQuery.isLoading ? (
+						<p>Loading...</p>
+					) : locationDataQuery.data?.address !== undefined ? (
+						<SaftyofLevelColumn
+							type={safetyMap[locationDataQuery.data.area?.safety ?? 'safe'].type}
+							text={safetyMap[locationDataQuery.data.area?.safety ?? 'safe'].label}
+							address={locationDataQuery.data.address}
+						/>
+					) : (
+						<p>位置情報の取得に失敗しました。ブラウザの設定を確認してください。</p>
+					)}
 				</div>
 				{requestingRequests.length > 0 && (
 					<div>

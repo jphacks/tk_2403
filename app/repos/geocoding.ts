@@ -27,7 +27,7 @@ type GeocodingResult = {
 };
 
 export function formatAddress(results: GeocodingResult[]) {
-	if (results.length === 0 || results.length >= 2) {
+	if (results.length === 0) {
 		return null;
 	}
 
