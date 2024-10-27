@@ -10,6 +10,7 @@ import ProfileColumn from '../../../../../components/shared/profileColumn';
 import UserNavbar from '../../../../../components/shared/userNavbar';
 import Subtitle from '../../../../../components/subtitle';
 import { getEvacuationPlaceFn } from '../../../../../server/evacuationPlace';
+import {} from '../../../../../server/favorite';
 import { cancelRequestFn, createRequestFn } from '../../../../../server/request';
 import { profileContainerStyle } from '../../../../../styles/layout';
 
@@ -36,7 +37,7 @@ function PlaceDetail() {
 				bg: 'bg',
 			})}
 		>
-			<HeaderWithStar title={place.profile.name} />
+			<HeaderWithStar title={place.profile.name} placeId={place.id} isFavorite={place.isFavorite} />
 			<div className={profileContainerStyle()}>
 				<div
 					className={css({

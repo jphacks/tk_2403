@@ -5,18 +5,27 @@ import SaftyofLevelColumn from '../../../../components/shared/saftyOfLevelColumn
 import UserNavbar from '../../../../components/shared/userNavbar';
 import CardWithDangerBand from '../../../../components/shared/wantToBorrow/cardWithDangerBand';
 import Subtitle from '../../../../components/subtitle';
+import { getFavoritesFnQueryKey } from '../../../../query/favorite';
 import { getMyRequestsFnQueryKey } from '../../../../query/request';
+import { getFavoritesFn } from '../../../../server/favorite';
 import { getMyRequestsFn } from '../../../../server/request';
 import { layoutStyle } from '../../../../styles/layout';
 import { serverFnQuery } from '../../../../utils/client';
 
 const getMyRequestsFnQuery = serverFnQuery(getMyRequestsFn);
+const getFavoritesFnQuery = serverFnQuery(getFavoritesFn);
 
 export const Route = createFileRoute('/_authed/_registered/guest/')({
 	loader: async ({ context }) => {
 		await context.queryClient.prefetchQuery(
 			getMyRequestsFnQuery.serverQueryOptions({
 				queryKey: getMyRequestsFnQueryKey,
+				queryFn: (fn) => fn(),
+			}),
+		);
+		await context.queryClient.prefetchQuery(
+			getFavoritesFnQuery.serverQueryOptions({
+				queryKey: getFavoritesFnQueryKey,
 				queryFn: (fn) => fn(),
 			}),
 		);
@@ -32,6 +41,10 @@ function Guset() {
 	const requestingRequests = myRequestsQuery.data?.filter((request) => request.status === 'requesting') ?? [];
 	const approvedRequests = myRequestsQuery.data?.filter((request) => request.status === 'approved') ?? [];
 	const rejectedRequests = myRequestsQuery.data?.filter((request) => request.status === 'rejected') ?? [];
+	const favoritesQuery = getFavoritesFnQuery.useQuery({
+		queryKey: getFavoritesFnQueryKey,
+		queryFn: (fn) => fn(),
+	});
 
 	return (
 		<div
@@ -77,6 +90,7 @@ function Guset() {
 								houseName={request.evacuationPlace.profile.name}
 								intro={request.evacuationPlace.description}
 								houseImgList={request.evacuationPlace.pictureUrls}
+								isFavorite={request.evacuationPlace.isFavorite}
 							/>
 						))}
 					</div>
@@ -99,6 +113,7 @@ function Guset() {
 								houseName={request.evacuationPlace.profile.name}
 								intro={request.evacuationPlace.description}
 								houseImgList={request.evacuationPlace.pictureUrls}
+								isFavorite={request.evacuationPlace.isFavorite}
 							/>
 						))}
 					</div>
@@ -121,31 +136,34 @@ function Guset() {
 								houseName={request.evacuationPlace.profile.name}
 								intro={request.evacuationPlace.description}
 								houseImgList={request.evacuationPlace.pictureUrls}
+								isFavorite={request.evacuationPlace.isFavorite}
 							/>
 						))}
 					</div>
 				)}
-				<div>
-					<div
-						className={css({
-							mb: '3',
-						})}
-					>
-						<Subtitle text="お気に入り一覧" />
+				{(favoritesQuery.data ?? []).length > 0 && (
+					<div>
+						<div
+							className={css({
+								mb: '3',
+							})}
+						>
+							<Subtitle text="お気に入り一覧" />
+						</div>
+						{favoritesQuery.data?.map((favorite) => (
+							<CardWithDangerBand
+								key={favorite.id}
+								placeId={favorite.evacuationPlace.id}
+								type={favorite.area?.safety ?? 'safe'}
+								address={favorite.evacuationPlace.address}
+								houseName={favorite.evacuationPlace.profile.name}
+								intro={favorite.evacuationPlace.description}
+								houseImgList={favorite.evacuationPlace.pictureUrls}
+								isFavorite={true}
+							/>
+						))}
 					</div>
-					<CardWithDangerBand
-						placeId={1}
-						type="safe"
-						address="〇〇県〇〇市"
-						houseName="釘崎家"
-						intro="初めまして、とみたです。よろしくお願いします。"
-						houseImgList={[
-							'https://placehold.jp/150x150.png',
-							'https://placehold.jp/150x150.png',
-							'https://placehold.jp/150x150.png',
-						]}
-					/>
-				</div>
+				)}
 			</div>
 			<UserNavbar />
 		</div>

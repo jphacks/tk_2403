@@ -1,6 +1,9 @@
-import { Link } from '@tanstack/react-router';
-import { FaRegStar } from 'react-icons/fa';
+import { useNavigate } from '@tanstack/react-router';
+import { useServerFn } from '@tanstack/start';
+import { useState } from 'react';
+import { FaRegStar, FaStar } from 'react-icons/fa';
 import { css } from '../../../../styled-system/css';
+import { createFavoriteFn, deleteFavoriteFn } from '../../../server/favorite';
 import DangerBand from '../dangerBand';
 
 type Props = {
@@ -10,14 +13,30 @@ type Props = {
 	type: 'safe' | 'caution' | 'danger';
 	address: string;
 	intro: string;
+	isFavorite: boolean;
 };
 
-export default function CardWithDangerBand({ placeId: id, houseName, houseImgList, type, address, intro }: Props) {
+export default function CardWithDangerBand({
+	placeId,
+	houseName,
+	houseImgList,
+	type,
+	address,
+	intro,
+	isFavorite,
+}: Props) {
+	const navigate = useNavigate();
+	const [currentIsFavorite, setCurrentIsFavorite] = useState(isFavorite);
+	const createFavorite = useServerFn(createFavoriteFn);
+	const deleteFavorite = useServerFn(deleteFavoriteFn);
+
 	return (
-		<Link
-			to="/guest/place/$placeId"
-			params={{ placeId: id.toString() }}
-			className={css({ display: 'block', roundedTop: 'md', roundedBottom: 'xl', overflow: 'hidden' })}
+		<button
+			type="button"
+			onClick={() => {
+				navigate({ to: '/guest/place/$placeId', params: { placeId: placeId.toString() } });
+			}}
+			className={css({ display: 'block', roundedTop: 'md', roundedBottom: 'xl', w: 'full', overflow: 'hidden' })}
 		>
 			<DangerBand type={type} address={address} />
 			<div
@@ -43,7 +62,25 @@ export default function CardWithDangerBand({ placeId: id, houseName, houseImgLis
 					>
 						{houseName}
 					</h2>
-					<FaRegStar className={css({ color: 'primary', fontSize: 'lg' })} />
+					{currentIsFavorite ? (
+						<FaStar
+							className={css({ color: 'primary', fontSize: 'lg' })}
+							onClick={async (e) => {
+								e.stopPropagation();
+								await deleteFavorite({ evacuationPlaceId: placeId });
+								setCurrentIsFavorite(false);
+							}}
+						/>
+					) : (
+						<FaRegStar
+							className={css({ color: 'primary', fontSize: 'lg' })}
+							onClick={async (e) => {
+								e.stopPropagation();
+								await createFavorite({ evacuationPlaceId: placeId });
+								setCurrentIsFavorite(true);
+							}}
+						/>
+					)}
 				</div>
 				<div
 					className={css({
@@ -81,6 +118,6 @@ export default function CardWithDangerBand({ placeId: id, houseName, houseImgLis
 					{intro}
 				</p>
 			</div>
-		</Link>
+		</button>
 	);
 }
