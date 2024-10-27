@@ -8,6 +8,7 @@ type Props = {
 export const TagStyle = cva({
 	base: {
 		display: 'flex',
+		flexShrink: '0',
 		justifyContent: 'center',
 		alignItems: 'center',
 		rounded: 'md',
