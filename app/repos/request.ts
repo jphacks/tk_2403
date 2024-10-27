@@ -1,13 +1,13 @@
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import type { DB } from '../db/client';
-import { profileTable, requestTable } from '../db/schema';
+import { requestTable } from '../db/schema';
 import type {} from '../types/profile';
 import type { CreateRequestValue } from '../types/request';
 
 export async function getUserRequests(db: DB, filter: { userId: string }) {
 	const requests = await db.query.requestTable.findMany({
 		with: { evacuationPlace: true, profile: true },
-		where: eq(profileTable.userId, filter.userId),
+		where: eq(requestTable.profileId, filter.userId),
 	});
 	return requests;
 }
@@ -16,6 +16,17 @@ export async function getRequest(db: DB, filter: { requestId: number }) {
 	const request = await db.query.requestTable.findFirst({
 		with: { evacuationPlace: true, profile: true },
 		where: eq(requestTable.id, filter.requestId),
+	});
+	return request;
+}
+
+export async function getRequestByGuestAndPlace(db: DB, filter: { guestId: string; evacuationPlaceId: number }) {
+	const request = await db.query.requestTable.findFirst({
+		with: { evacuationPlace: true, profile: true },
+		where: and(
+			eq(requestTable.profileId, filter.guestId),
+			eq(requestTable.evacuationPlaceId, filter.evacuationPlaceId),
+		),
 	});
 	return request;
 }

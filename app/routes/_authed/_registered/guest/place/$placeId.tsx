@@ -1,4 +1,6 @@
 import { createFileRoute, notFound } from '@tanstack/react-router';
+import { useServerFn } from '@tanstack/start';
+import { useState } from 'react';
 import { css } from '../../../../../../styled-system/css';
 import HeaderWithStar from '../../../../../components/guestPage/headerWithStar';
 import ImagePreview from '../../../../../components/shared/ImagePreview';
@@ -8,6 +10,7 @@ import ProfileBaseWithBtn from '../../../../../components/shared/profileBaseWith
 import ProfileColumn from '../../../../../components/shared/profileColumn';
 import Subtitle from '../../../../../components/subtitle';
 import { getEvacuationPlaceFn } from '../../../../../server/evacuationPlace';
+import { cancelRequestFn, createRequestFn } from '../../../../../server/request';
 import { profileContainerStyle } from '../../../../../styles/layout';
 
 export const Route = createFileRoute('/_authed/_registered/guest/place/$placeId')({
@@ -23,6 +26,9 @@ export const Route = createFileRoute('/_authed/_registered/guest/place/$placeId'
 
 function PlaceDetail() {
 	const { place } = Route.useLoaderData();
+	const createRequest = useServerFn(createRequestFn);
+	const cancelRequest = useServerFn(cancelRequestFn);
+	const [requestStatus, setRequestStatus] = useState(place.requestStatus);
 
 	return (
 		<div
@@ -39,7 +45,18 @@ function PlaceDetail() {
 				>
 					<ImagePreview houseImgList={place.pictureUrls} />
 				</div>
-				<ProfileBaseWithBtn text={place.address}>
+				<ProfileBaseWithBtn
+					text={place.address}
+					requestStatus={requestStatus}
+					onCreateRequest={async () => {
+						await createRequest({ evacuationPlaceId: place.id });
+						setRequestStatus('requesting');
+					}}
+					onCancelRequest={async () => {
+						await cancelRequest({ evacuationPlaceId: place.id });
+						setRequestStatus(null);
+					}}
+				>
 					<div
 						className={css({
 							display: 'flex',

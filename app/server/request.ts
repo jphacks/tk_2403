@@ -2,8 +2,21 @@ import { createServerFn } from '@tanstack/start';
 import { db } from '../db/client';
 import {} from '../repos/image';
 import {} from '../repos/profile';
-import { createRequest, deleteRequest, getRequest, getUserRequests, updateRequest } from '../repos/request';
-import { createRequestSchema, getUserRequestsSchema, updateRequestSchema } from '../schemas/request';
+import {
+	createRequest,
+	deleteRequest,
+	getRequest,
+	getRequestByGuestAndPlace,
+	getUserRequests,
+	updateRequest,
+} from '../repos/request';
+import {
+	approveRequestSchema,
+	cancelRequestSchema,
+	createRequestSchema,
+	getUserRequestsSchema,
+	rejectRequestSchema,
+} from '../schemas/request';
 import { serverZodValidator } from '../utils/server';
 import { getAuthUserFn } from './auth';
 
@@ -41,31 +54,31 @@ export const createRequestFn = createServerFn(
 
 export const cancelRequestFn = createServerFn(
 	'POST',
-	serverZodValidator(updateRequestSchema, async ({ requestId }) => {
+	serverZodValidator(cancelRequestSchema, async ({ evacuationPlaceId }) => {
 		const user = await getAuthUserFn();
 		if (user === null) {
 			throw new Error('Unauthorized');
 		}
 
 		await db.transaction(async (tx) => {
-			const oldRequest = await getRequest(tx, { requestId });
-			if (oldRequest === undefined) {
+			const request = await getRequestByGuestAndPlace(tx, { guestId: user.id, evacuationPlaceId });
+			if (request === undefined) {
 				throw new Error('Request not found');
 			}
-			if (oldRequest.profileId !== user.id) {
+			if (request.profileId !== user.id) {
 				throw new Error('Forbidden');
 			}
-			if (oldRequest.status !== 'requesting') {
+			if (request.status !== 'requesting') {
 				throw new Error('Request is not in requesting status');
 			}
-			await deleteRequest(tx, requestId);
+			await deleteRequest(tx, request.id);
 		});
 	}),
 );
 
 export const approveRequestFn = createServerFn(
 	'POST',
-	serverZodValidator(updateRequestSchema, async ({ requestId }) => {
+	serverZodValidator(approveRequestSchema, async ({ requestId }) => {
 		const user = await getAuthUserFn();
 		if (user === null) {
 			throw new Error('Unauthorized');
@@ -91,7 +104,7 @@ export const approveRequestFn = createServerFn(
 
 export const rejectRequestFn = createServerFn(
 	'POST',
-	serverZodValidator(updateRequestSchema, async ({ requestId }) => {
+	serverZodValidator(rejectRequestSchema, async ({ requestId }) => {
 		const user = await getAuthUserFn();
 		if (user === null) {
 			throw new Error('Unauthorized');
