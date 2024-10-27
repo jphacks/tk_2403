@@ -5,7 +5,7 @@
 ## 🔗 スライドURL
 [Canva](https://www.canva.com/design/DAGUe39bp6I/9KdaRKhLURWXL_Cwt-S-SQ/view?utm_content=DAGUe39bp6I&utm_campaign=designshare&utm_medium=link&utm_source=editor)
 
-## 🎥　動画
+## 🎥　製品動画
 - 家を貸す人
 
 https://github.com/user-attachments/assets/466e8867-f9d6-4c0b-9174-58162f3dc830
