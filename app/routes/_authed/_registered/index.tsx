@@ -28,11 +28,11 @@ function Home() {
 					spaceY: '5',
 				})}
 			>
-				<Card color="primary" to="/guest/register">
+				<Card color="primary" to="/guest">
 					<GoPersonFill size={40} />
 					退避先を探す
 				</Card>
-				<Card color="safe" to="/host/register">
+				<Card color="safe" to="/host">
 					<FaHouse size={40} />
 					退避先を提供する
 				</Card>

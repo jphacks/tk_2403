@@ -11,7 +11,6 @@ export default function DangerBand({ type, address }: Props) {
 			display: 'flex',
 			gap: '2',
 			alignItems: 'center',
-			roundedTop: 'md',
 			py: '2',
 			px: '2',
 		},

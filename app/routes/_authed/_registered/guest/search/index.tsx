@@ -62,7 +62,7 @@ function Page6() {
 					<CardWithDangerBand
 						houseName="東海荘子"
 						houseImgList={['https://picsum.photos/200/302', 'https://picsum.photos/200/303']}
-						type="warn"
+						type="caution"
 						address="大阪市中央区"
 						intro="少し注意が必要ですが、便利なロケーションです。"
 					/>

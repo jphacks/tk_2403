@@ -4,7 +4,7 @@ import { cva } from '../../../styled-system/css';
 type Props = {
 	children: ReactNode;
 	color: 'primary' | 'safe';
-	to: '/guest/register' | '/host/register';
+	to: '/guest' | '/host';
 };
 
 export default function Card({ children, color, to }: Props) {

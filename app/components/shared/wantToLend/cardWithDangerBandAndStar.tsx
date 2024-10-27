@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import { css } from '../../../../styled-system/css';
 import DangerBand from '../dangerBand';
 
@@ -11,11 +12,13 @@ type Props = {
 
 export default function CardWithDangerBandAndStar({ houseName, houseImgList, type, address, intro }: Props) {
 	return (
-		<div>
+		<Link
+			to="/host/place"
+			className={css({ display: 'block', roundedTop: 'md', roundedBottom: 'xl', overflow: 'hidden' })}
+		>
 			<DangerBand type={type} address={address} />
 			<div
 				className={css({
-					roundedBottom: 'xl',
 					py: '[15px]',
 					bg: 'white',
 				})}
@@ -65,6 +68,6 @@ export default function CardWithDangerBandAndStar({ houseName, houseImgList, typ
 					{intro}
 				</p>
 			</div>
-		</div>
+		</Link>
 	);
 }

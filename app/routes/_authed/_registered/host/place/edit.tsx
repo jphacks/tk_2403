@@ -10,51 +10,55 @@ import SelectInfoRow from '../../../../../components/shared/selectInfoRow';
 import Subtitle from '../../../../../components/subtitle';
 import Textarea from '../../../../../components/textarea';
 import { createEvacuationPlaceSchema } from '../../../../../schemas/evacuationPlace';
-import { createEvacuationPlaceFn, getMyEvacuationPlaceFn } from '../../../../../server/evacuationPlace';
+import { getMyEvacuationPlaceFn, updateEvacuationPlaceFn } from '../../../../../server/evacuationPlace';
 import { buttonStyle } from '../../../../../styles/button';
 import { containerStyle } from '../../../../../styles/layout';
 import type { Image } from '../../../../../types/image';
 
-export const Route = createFileRoute('/_authed/_registered/host/place/create')({
+export const Route = createFileRoute('/_authed/_registered/host/place/edit')({
 	loader: async () => {
 		const place = await getMyEvacuationPlaceFn();
-		if (place !== undefined) {
-			throw redirect({ to: '/host/place' });
+		if (place === undefined) {
+			throw redirect({ to: '/host/place/create' });
 		}
+		return { place };
 	},
-	component: CreatePlace,
+	component: EditPlace,
 });
 
-function CreatePlace() {
+function EditPlace() {
+	const { place } = Route.useLoaderData();
 	const navigate = useNavigate();
 
-	const [pictures, setPictures] = useState<Image[]>([]);
+	const [deletePictureIndices, setDeletePictureIndices] = useState<number[]>([]);
+	const [newPictures, setNewPictures] = useState<Image[]>([]);
+	const [picturesLength, setPicturesLength] = useState(place.pictureUrls.length);
 	const [showPicturesError, setShowPicturesError] = useState(false);
 	const [showInvalidAddressError, setShowInvalidAddressError] = useState(false);
 
-	const createEvacuationPlace = useServerFn(createEvacuationPlaceFn);
+	const updateEvacuationPlace = useServerFn(updateEvacuationPlaceFn);
 
 	const form = useForm({
 		defaultValues: {
-			description: '',
-			address: '',
-			maxHeadcount: '',
-			availablePeriodStart: '',
-			availablePeriodEnd: '',
-			petAllowed: undefined as unknown as boolean,
-			barrierFree: undefined as unknown as boolean,
+			description: place.description,
+			address: place.address,
+			maxHeadcount: place.maxHeadcount.toString(),
+			availablePeriodStart: place.availablePeriodStart,
+			availablePeriodEnd: place.availablePeriodEnd,
+			petAllowed: place.petAllowed,
+			barrierFree: place.barrierFree,
 		},
 		validatorAdapter: zodValidator(),
 		onSubmit: async ({ value }) => {
-			if (pictures.length === 0) {
+			if (picturesLength === 0) {
 				return;
 			}
-			const { error } = await createEvacuationPlace({ ...value, pictures });
+			const { error } = await updateEvacuationPlace({ ...value, deletePictureIndices, newPictures });
 			if (error === 'invalid-address') {
 				setShowInvalidAddressError(true);
 				return;
 			}
-			await navigate({ to: '/host' });
+			await navigate({ to: '/host/place' });
 		},
 	});
 
@@ -75,7 +79,7 @@ function CreatePlace() {
 					fontWeight: 'bold',
 				})}
 			>
-				提供場所を登録する
+				提供場所を編集する
 			</h2>
 
 			<form
@@ -85,7 +89,7 @@ function CreatePlace() {
 					if (!showInvalidAddressError && form.state.canSubmit && !form.state.isSubmitting) {
 						form.handleSubmit();
 					}
-					if (pictures.length === 0) {
+					if (picturesLength === 0) {
 						setShowPicturesError(true);
 					}
 				}}
@@ -95,9 +99,13 @@ function CreatePlace() {
 					<Subtitle text="提供場所の写真" />
 					<div className={css({ spaceY: '2' })}>
 						<ImageInput
-							onChange={({ newImages }) => {
-								setPictures(newImages);
-								if (newImages.length === 0) {
+							defaultUrls={place.pictureUrls}
+							onChange={({ deleteIndices, newImages }) => {
+								setDeletePictureIndices(deleteIndices);
+								setNewPictures(newImages);
+								const updatedPicturesLength = place.pictureUrls.length + newImages.length - deleteIndices.length;
+								setPicturesLength(updatedPicturesLength);
+								if (updatedPicturesLength === 0) {
 									setShowPicturesError(true);
 								} else {
 									setShowPicturesError(false);
@@ -125,7 +133,12 @@ function CreatePlace() {
 					})}
 				>
 					<Subtitle text="家の説明文" />
-					<form.Field name="description" validators={{ onChange: createEvacuationPlaceSchema.shape.description }}>
+					<form.Field
+						name="description"
+						validators={{
+							onChange: createEvacuationPlaceSchema.shape.description,
+						}}
+					>
 						{(field) => (
 							<Textarea
 								placeholder="説明文を入力してください..."
@@ -150,7 +163,12 @@ function CreatePlace() {
 							borderColor: 'border',
 						})}
 					>
-						<form.Field name="address" validators={{ onChange: createEvacuationPlaceSchema.shape.address }}>
+						<form.Field
+							name="address"
+							validators={{
+								onChange: createEvacuationPlaceSchema.shape.address,
+							}}
+						>
 							{(field) => (
 								<InfoRow
 									label="住所"
@@ -169,7 +187,12 @@ function CreatePlace() {
 								/>
 							)}
 						</form.Field>
-						<form.Field name="maxHeadcount" validators={{ onChange: createEvacuationPlaceSchema.shape.maxHeadcount }}>
+						<form.Field
+							name="maxHeadcount"
+							validators={{
+								onChange: createEvacuationPlaceSchema.shape.maxHeadcount,
+							}}
+						>
 							{(field) => (
 								<InfoRow
 									label="受け入れ可能人数"
@@ -183,7 +206,9 @@ function CreatePlace() {
 						</form.Field>
 						<form.Field
 							name="availablePeriodStart"
-							validators={{ onChange: createEvacuationPlaceSchema.shape.availablePeriodStart }}
+							validators={{
+								onChange: createEvacuationPlaceSchema.shape.availablePeriodStart,
+							}}
 						>
 							{(field) => (
 								<InfoRow
@@ -198,7 +223,9 @@ function CreatePlace() {
 						</form.Field>
 						<form.Field
 							name="availablePeriodEnd"
-							validators={{ onChange: createEvacuationPlaceSchema.shape.availablePeriodEnd }}
+							validators={{
+								onChange: createEvacuationPlaceSchema.shape.availablePeriodEnd,
+							}}
 						>
 							{(field) => (
 								<InfoRow
@@ -211,7 +238,12 @@ function CreatePlace() {
 								/>
 							)}
 						</form.Field>
-						<form.Field name="petAllowed" validators={{ onChange: createEvacuationPlaceSchema.shape.petAllowed }}>
+						<form.Field
+							name="petAllowed"
+							validators={{
+								onChange: createEvacuationPlaceSchema.shape.petAllowed,
+							}}
+						>
 							{(field) => (
 								<SelectInfoRow
 									selectList={{ true: '可', false: '否' }}
@@ -223,7 +255,12 @@ function CreatePlace() {
 								/>
 							)}
 						</form.Field>
-						<form.Field name="barrierFree" validators={{ onChange: createEvacuationPlaceSchema.shape.barrierFree }}>
+						<form.Field
+							name="barrierFree"
+							validators={{
+								onChange: createEvacuationPlaceSchema.shape.barrierFree,
+							}}
+						>
 							{(field) => (
 								<SelectInfoRow
 									selectList={{ true: '有', false: '無' }}
@@ -245,7 +282,7 @@ function CreatePlace() {
 							className={buttonStyle({ type: 'normal' })}
 							disabled={showPicturesError || showInvalidAddressError || !canSubmit || isSubmitting}
 						>
-							登録する
+							保存する
 						</button>
 					)}
 				</form.Subscribe>
