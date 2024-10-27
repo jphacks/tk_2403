@@ -75,6 +75,7 @@ function Search() {
 							type={evacuationPlace.area?.safety ?? 'safe'}
 							address={evacuationPlace.address}
 							intro={evacuationPlace.description}
+							isFavorite={evacuationPlace.isFavorite}
 						/>
 					))}
 				</div>
