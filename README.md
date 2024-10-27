@@ -1,6 +1,6 @@
 # 二次退避くん
 
-![見出しを追加](https://github.com/user-attachments/assets/b348c055-7943-4b82-b4bf-465c915ef83f)
+![サムネイル　二次退避くん](https://github.com/user-attachments/assets/f1c4a854-9aa4-45c4-9a90-995322b59f4d)
 
 ## 🔗 スライドURL
 [Canva](https://www.canva.com/design/DAGUe39bp6I/9KdaRKhLURWXL_Cwt-S-SQ/view?utm_content=DAGUe39bp6I&utm_campaign=designshare&utm_medium=link&utm_source=editor)
