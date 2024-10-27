@@ -47,6 +47,7 @@ function Guset() {
 						<Subtitle text="承認済の家族" />
 					</div>
 					<CardWithDangerBand
+						placeId={1}
 						type="safe"
 						address="〇〇県〇〇市"
 						houseName="釘崎家"
@@ -67,6 +68,7 @@ function Guset() {
 						<Subtitle text="お気に入り一覧" />
 					</div>
 					<CardWithDangerBand
+						placeId={1}
 						type="safe"
 						address="〇〇県〇〇市"
 						houseName="釘崎家"

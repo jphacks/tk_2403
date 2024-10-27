@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, notFound } from '@tanstack/react-router';
 import { css } from '../../../../../../styled-system/css';
 import HeaderWithStar from '../../../../../components/guestPage/headerWithStar';
 import ImagePreview from '../../../../../components/shared/ImagePreview';
@@ -7,31 +7,39 @@ import NotInputInfoRow from '../../../../../components/shared/notInputInfoRow';
 import ProfileBaseWithBtn from '../../../../../components/shared/profileBaseWithBtn';
 import ProfileColumn from '../../../../../components/shared/profileColumn';
 import Subtitle from '../../../../../components/subtitle';
+import { getEvacuationPlaceFn } from '../../../../../server/evacuationPlace';
 import { profileContainerStyle } from '../../../../../styles/layout';
 
 export const Route = createFileRoute('/_authed/_registered/guest/place/$placeId')({
-	component: Page10,
+	loader: async ({ params }) => {
+		const place = await getEvacuationPlaceFn({ id: Number.parseInt(params.placeId) });
+		if (place === undefined) {
+			throw notFound();
+		}
+		return { place };
+	},
+	component: PlaceDetail,
 });
 
-function Page10() {
+function PlaceDetail() {
+	const { place } = Route.useLoaderData();
+
 	return (
 		<div
 			className={css({
 				bg: 'bg',
 			})}
 		>
-			<HeaderWithStar title="釘崎家" />
+			<HeaderWithStar title={place.profile.name} />
 			<div className={profileContainerStyle()}>
 				<div
 					className={css({
 						py: '[30px]',
 					})}
 				>
-					<ImagePreview
-						houseImgList={['https://picsum.photos/id/337/200/300', 'https://picsum.photos/id/237/200/300']}
-					/>
+					<ImagePreview houseImgList={place.pictureUrls} />
 				</div>
-				<ProfileBaseWithBtn text="こんばんは">
+				<ProfileBaseWithBtn text={place.address}>
 					<div
 						className={css({
 							display: 'flex',
@@ -55,7 +63,7 @@ function Page10() {
 							>
 								<Subtitle text="管理者" />
 							</div>
-							<ProfileColumn name="田中太郎" src="https://picsum.photos/id/337/200/300" />
+							<ProfileColumn name={place.profile.name} src={place.profile.pictureUrls[0]!} />
 						</div>
 
 						<div
@@ -78,7 +86,7 @@ function Page10() {
 									color: 'text.muted',
 								})}
 							>
-								あああああああああああああああああああああああああ ああああああああああ
+								{place.description}
 							</p>
 						</div>
 
@@ -103,10 +111,13 @@ function Page10() {
 									borderColor: 'border',
 								})}
 							>
-								<NotInputInfoRow label="家族構成" value="4人家族" />
-								<NotInputInfoRow label="ペットの有無" value="無" />
-								<NotInputInfoRow label="提供可能期間" value="2024/10 - 2024/12" />
-								<NotInputInfoRow label="バリアフリー" value="有" />
+								<NotInputInfoRow label="受け入れ可能人数" value={`${place.maxHeadcount}人`} />
+								<NotInputInfoRow
+									label="提供可能期間"
+									value={`${place.availablePeriodStart} ~ ${place.availablePeriodEnd}`}
+								/>
+								<NotInputInfoRow label="ペットの受け入れ" value={place.petAllowed ? '可' : '否'} />
+								<NotInputInfoRow label="バリアフリー" value={place.barrierFree ? '有' : '無'} />
 							</div>
 						</div>
 					</div>

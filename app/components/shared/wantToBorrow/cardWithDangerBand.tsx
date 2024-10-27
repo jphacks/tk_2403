@@ -1,8 +1,10 @@
+import { Link } from '@tanstack/react-router';
 import { FaRegStar } from 'react-icons/fa';
 import { css } from '../../../../styled-system/css';
 import DangerBand from '../dangerBand';
 
 type Props = {
+	placeId: number;
 	houseName: string;
 	houseImgList: string[];
 	type: 'safe' | 'caution' | 'danger';
@@ -10,9 +12,13 @@ type Props = {
 	intro: string;
 };
 
-export default function CardWithDangerBand({ houseName, houseImgList, type, address, intro }: Props) {
+export default function CardWithDangerBand({ placeId: id, houseName, houseImgList, type, address, intro }: Props) {
 	return (
-		<div className={css({ display: 'block', roundedTop: 'md', roundedBottom: 'xl', overflow: 'hidden' })}>
+		<Link
+			to="/guest/place/$placeId"
+			params={{ placeId: id.toString() }}
+			className={css({ display: 'block', roundedTop: 'md', roundedBottom: 'xl', overflow: 'hidden' })}
+		>
 			<DangerBand type={type} address={address} />
 			<div
 				className={css({
@@ -75,6 +81,6 @@ export default function CardWithDangerBand({ houseName, houseImgList, type, addr
 					{intro}
 				</p>
 			</div>
-		</div>
+		</Link>
 	);
 }
