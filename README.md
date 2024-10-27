@@ -1,8 +1,12 @@
 # 二次退避くん
 
-[![IMAGE ALT TEXT HERE](https://jphacks.com/wp-content/uploads/2024/07/JPHACKS2024_ogp.jpg)](https://www.youtube.com/watch?v=DZXUkEj-CSI)
+![見出しを追加](https://github.com/user-attachments/assets/b348c055-7943-4b82-b4bf-465c915ef83f)
 
-## 製品概要
+## 🔗 スライドURL
+[Canva](https://www.canva.com/design/DAGUe39bp6I/9KdaRKhLURWXL_Cwt-S-SQ/view?utm_content=DAGUe39bp6I&utm_campaign=designshare&utm_medium=link&utm_source=editor)
+
+
+## 📦 製品概要
 
 ### 背景(製品開発のきっかけ、課題等）
 
@@ -20,14 +24,19 @@
 
 ### 解決出来ること
 
+このプロダクトは、持病のある方や高齢者、障がいのある方、ペット同伴の方など一般的な避難所で生活が難しい方々が、バリアフリー対応やペット同伴可能な住宅といった多様なニーズに対応した避難場所を迅速に見つけ、安全で安心な避難生活を確保できる仕組みを提供します。
+
 ### 今後の展望
+
+- AIを用いてホストとゲスト間のコミュニケーションの障壁を低くする
+- 部屋画像から３Dモデルを作成し、部屋のイメージをより高める
 
 ### 注力したこと（こだわり等）
 
 -
 -
 
-## 開発技術
+## 🚀 開発技術
 
 ### 活用した技術
 
@@ -37,19 +46,8 @@
 
 #### フレームワーク・ライブラリ・モジュール
 
-- TS
-- React
-- Panda CSS
-- Radix UI
-- Tanstack （Router、Query、Form、Start）
-- Drizzle
-- Zod
-- Supabase （Auth、DB、Storage）
-- Biome
-- Prettier
-- CommitLint
-- LeftHook
-- DevBox
+![image](https://github.com/user-attachments/assets/1545cee3-a3c0-4179-a1ad-6a34614a5d04)
+
 
 #### デバイス
 
