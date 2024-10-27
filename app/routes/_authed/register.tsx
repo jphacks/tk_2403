@@ -65,7 +65,7 @@ function Register() {
 					fontWeight: 'bold',
 				})}
 			>
-				二次待避君へようこそ
+				二次退避くんへようこそ
 			</h2>
 			<form
 				onSubmit={(e) => {
@@ -236,7 +236,7 @@ function Register() {
 								wordWrap: 'break-word',
 							})}
 						>
-							二次待避くんの
+							二次退避くんの
 							<span className={css({ color: 'primary', fontSize: 'sm' })}>利用規約・プライバシーポリシー</span>
 							の内容を確認のうえ、同意します。
 						</p>
@@ -249,7 +249,7 @@ function Register() {
 								className={buttonStyle({ type: 'normal' })}
 								disabled={!ageConfirmed || !termsAgreed || showPicturesError || !canSubmit || isSubmitting}
 							>
-								二次待避くんをはじめる
+								二次退避くんをはじめる
 							</button>
 						)}
 					</form.Subscribe>

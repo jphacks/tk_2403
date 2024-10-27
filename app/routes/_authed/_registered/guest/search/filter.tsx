@@ -78,7 +78,7 @@ function SearchFilter() {
 					<form.Field name="headcount" validators={{ onChange: getEvacuationPlacesSchema.shape.headcount }}>
 						{(field) => (
 							<InfoRow
-								label="待避する人数"
+								label="退避する人数"
 								value={field.state.value ?? ''}
 								placeholder="例: 4"
 								errors={field.state.meta.errors}

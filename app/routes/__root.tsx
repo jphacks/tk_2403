@@ -16,7 +16,7 @@ export const Route = createRootRouteWithContext<{
 			content: 'width=device-width, initial-scale=1',
 		},
 		{
-			title: '二次待避くん',
+			title: '二次退避くん',
 		},
 	],
 	links: () => [{ rel: 'stylesheet', href: appCss }],
