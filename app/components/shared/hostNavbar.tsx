@@ -3,25 +3,36 @@ import { FiFileText, FiHome, FiMessageSquare, FiUser } from 'react-icons/fi';
 import type { IconType } from 'react-icons/lib';
 import { css } from '../../../styled-system/css';
 
-const navItems = [
+type NavItem = {
+	name: string;
+	href: string;
+	activeForSubPath: boolean;
+	icon: IconType;
+};
+
+const navItems: NavItem[] = [
 	{
 		name: 'ホーム',
-		href: '/',
+		href: '/host',
+		activeForSubPath: false,
 		icon: FiHome,
 	},
 	{
 		name: 'リクエスト',
-		href: '/search',
+		href: '/host/search',
+		activeForSubPath: true,
 		icon: FiFileText,
 	},
 	{
 		name: 'チャット',
-		href: '/chat',
+		href: '/host/chat',
+		activeForSubPath: true,
 		icon: FiMessageSquare,
 	},
 	{
 		name: 'プロフィール',
-		href: '/profile',
+		href: '/host/profile',
+		activeForSubPath: true,
 		icon: FiUser,
 	},
 ];
@@ -53,7 +64,7 @@ export default function HostNavbar() {
 					key={item.href}
 					name={item.name}
 					href={item.href}
-					isActive={isActive(pathname, item.href)}
+					isActive={isActive(pathname, item)}
 					Icon={item.icon}
 				/>
 			))}
@@ -89,6 +100,6 @@ function NavItem({ name, href, isActive, Icon }: { name?: string; href: string; 
 	);
 }
 
-const isActive = (pathname: string, href: string) => {
-	return pathname === href || pathname.startsWith(`${href}/`);
+const isActive = (pathname: string, item: NavItem) => {
+	return pathname === item.href || (item.activeForSubPath && pathname.startsWith(`${item.href}/`));
 };

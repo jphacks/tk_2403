@@ -12,10 +12,10 @@ export const profileTable = pgTable('profile', {
 	dateOfBirth: text('date_of_birth').notNull(), // YYYY-MM-DD
 	picturePaths: text('picture_paths').array().notNull(),
 	pictureUrls: text('picture_urls').array().notNull(),
-	createdAt: timestamp('created_at').defaultNow().notNull(),
-	updatedAt: timestamp('updated_at')
+	createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
 		.defaultNow()
-		.$onUpdate(() => new Date())
+		.$onUpdate(() => new Date().toISOString())
 		.notNull(),
 });
 
@@ -34,10 +34,10 @@ export const evacuationPlaceTable = pgTable('evacuation_place', {
 	availablePeriodEnd: text('available_period_end').notNull(), // YYYY-MM
 	petAllowed: boolean('pet_allowed').notNull(),
 	barrierFree: boolean('barrier_free').notNull(),
-	createdAt: timestamp('created_at').defaultNow().notNull(),
-	updatedAt: timestamp('updated_at')
+	createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
 		.defaultNow()
-		.$onUpdate(() => new Date())
+		.$onUpdate(() => new Date().toISOString())
 		.notNull(),
 });
 
@@ -45,10 +45,10 @@ export const areaTable = pgTable('area', {
 	id: serial('id').primaryKey(),
 	address: text('address').notNull(),
 	safety: safetyEnum('safety').notNull(),
-	createdAt: timestamp('created_at').defaultNow().notNull(),
-	updatedAt: timestamp('updated_at')
+	createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
 		.defaultNow()
-		.$onUpdate(() => new Date())
+		.$onUpdate(() => new Date().toISOString())
 		.notNull(),
 });
 
@@ -61,10 +61,10 @@ export const requestTable = pgTable('request', {
 		.notNull()
 		.references(() => evacuationPlaceTable.id),
 	status: requestStatusEnum('status').notNull(),
-	createdAt: timestamp('created_at').defaultNow().notNull(),
-	updatedAt: timestamp('updated_at')
+	createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
 		.defaultNow()
-		.$onUpdate(() => new Date())
+		.$onUpdate(() => new Date().toISOString())
 		.notNull(),
 });
 
@@ -78,10 +78,10 @@ export const favoriteEvacuationPlaceTable = pgTable(
 		evacuationPlaceId: integer('evacuation_place_id')
 			.notNull()
 			.references(() => evacuationPlaceTable.id),
-		createdAt: timestamp('created_at').defaultNow().notNull(),
-		updatedAt: timestamp('updated_at')
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
 			.defaultNow()
-			.$onUpdate(() => new Date())
+			.$onUpdate(() => new Date().toISOString())
 			.notNull(),
 	},
 	(table) => {

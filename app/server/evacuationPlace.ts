@@ -128,7 +128,7 @@ export const updateEvacuationPlaceFn = createServerFn(
 		const { place, deletePicturePaths } = await db.transaction(async (tx) => {
 			const oldPlace = await getEvacuationPlaceByUserId(tx, { userId: user.id });
 			if (oldPlace === undefined) {
-				throw new Error('Profile not found');
+				throw new Error('Place not found');
 			}
 
 			const picturePaths = [
@@ -149,7 +149,7 @@ export const updateEvacuationPlaceFn = createServerFn(
 				pictureUrls,
 			});
 
-			return { place, deletePicturePaths };
+			return { place: place!, deletePicturePaths };
 		});
 
 		await deleteImages(supabase, deletePicturePaths);
