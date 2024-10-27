@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/start';
 import { db } from '../db/client';
+import { getAreas } from '../repos/area';
 import {} from '../repos/image';
 import {} from '../repos/profile';
 import {
@@ -14,19 +15,25 @@ import {
 	approveRequestSchema,
 	cancelRequestSchema,
 	createRequestSchema,
-	getUserRequestsSchema,
 	rejectRequestSchema,
 } from '../schemas/request';
 import { serverZodValidator } from '../utils/server';
 import { getAuthUserFn } from './auth';
 
-export const getUserRequestsFn = createServerFn(
-	'GET',
-	serverZodValidator(getUserRequestsSchema, async ({ userId }) => {
-		const requests = await getUserRequests(db, { userId });
-		return requests;
-	}),
-);
+export const getMyRequestsFn = createServerFn('GET', async () => {
+	const user = await getAuthUserFn();
+	if (user === null) {
+		throw new Error('Unauthorized');
+	}
+
+	const requests = await getUserRequests(db, user.id, { userId: user.id });
+
+	const areas = await getAreas(db);
+	return requests.map((request) => ({
+		...request,
+		area: areas.find((area) => request.evacuationPlace.address.startsWith(area.address)),
+	}));
+});
 
 export const createRequestFn = createServerFn(
 	'POST',
@@ -37,7 +44,7 @@ export const createRequestFn = createServerFn(
 		}
 
 		const request = await db.transaction(async (tx) => {
-			const requests = await getUserRequests(tx, { userId: user.id });
+			const requests = await getUserRequests(tx, user.id, { userId: user.id });
 			if (requests.filter((request) => request.status !== 'rejected').length > 0) {
 				throw new Error('You already have a pending request');
 			}

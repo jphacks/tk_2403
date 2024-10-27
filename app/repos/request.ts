@@ -1,15 +1,34 @@
 import { and, eq } from 'drizzle-orm';
 import type { DB } from '../db/client';
-import { requestTable } from '../db/schema';
+import { favoriteEvacuationPlaceTable, requestTable } from '../db/schema';
 import type {} from '../types/profile';
 import type { CreateRequestValue } from '../types/request';
 
-export async function getUserRequests(db: DB, filter: { userId: string }) {
+export async function getUserRequests(db: DB, authUserId, filter: { userId: string }) {
 	const requests = await db.query.requestTable.findMany({
-		with: { evacuationPlace: true, profile: true },
+		with: {
+			evacuationPlace: {
+				with: {
+					profile: true,
+					favorites: {
+						where: eq(favoriteEvacuationPlaceTable.profileId, authUserId),
+					},
+				},
+			},
+			profile: true,
+		},
 		where: eq(requestTable.profileId, filter.userId),
 	});
-	return requests;
+	return requests.map((request) => {
+		const { favorites, ...evacuationPlace } = request.evacuationPlace;
+		return {
+			...request,
+			evacuationPlace: {
+				...evacuationPlace,
+				isFavorite: favorites.length > 0,
+			},
+		};
+	});
 }
 
 export async function getRequest(db: DB, filter: { requestId: number }) {
