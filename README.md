@@ -65,7 +65,8 @@ https://github.com/user-attachments/assets/f9da2071-669d-461f-b4b5-a09315663b71
 
 #### フレームワーク・ライブラリ・モジュール
 
-![image](https://github.com/user-attachments/assets/1545cee3-a3c0-4179-a1ad-6a34614a5d04)
+![見出しを追加 (1)](https://github.com/user-attachments/assets/b1d55ca4-32b0-4255-bd92-b7a4925c0f1b)
+
 
 
 #### デバイス
