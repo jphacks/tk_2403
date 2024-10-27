@@ -79,7 +79,7 @@ function Guset() {
 								mb: '3',
 							})}
 						>
-							<Subtitle text="リクエスト中の待避場所" />
+							<Subtitle text="リクエスト中の退避場所" />
 						</div>
 						{requestingRequests.map((request) => (
 							<CardWithDangerBand
@@ -102,7 +102,7 @@ function Guset() {
 								mb: '3',
 							})}
 						>
-							<Subtitle text="マッチングした待避場所" />
+							<Subtitle text="マッチングした退避場所" />
 						</div>
 						{approvedRequests.map((request) => (
 							<CardWithDangerBand
