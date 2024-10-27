@@ -8,7 +8,7 @@ type Props = {
 };
 
 export default function Tab({ children }: Props) {
-	const tabList = ['すべて', '認証前', '承認済'];
+	const tabList = ['すべて', '承認前', '承認済'];
 	const [value, setValue] = useState('すべて');
 
 	const tabStyle = cva({
@@ -27,7 +27,7 @@ export default function Tab({ children }: Props) {
 	});
 
 	return (
-		<Tabs.Root value={value} onValueChange={setValue} defaultValue="認証前">
+		<Tabs.Root value={value} onValueChange={setValue} defaultValue="承認前">
 			<Tabs.List
 				className={css({
 					display: 'flex',

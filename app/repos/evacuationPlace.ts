@@ -62,7 +62,7 @@ export async function getEvacuationPlaces(
 }
 
 export async function getEvacuationPlace(db: DB, authUserId: string, filter: { id: number }) {
-	const data = await db.query.evacuationPlaceTable.findFirst({
+	const value = await db.query.evacuationPlaceTable.findFirst({
 		with: {
 			profile: true,
 			favorites: {
@@ -74,10 +74,10 @@ export async function getEvacuationPlace(db: DB, authUserId: string, filter: { i
 		},
 		where: eq(evacuationPlaceTable.id, filter.id),
 	});
-	if (data === undefined) {
+	if (value === undefined) {
 		return undefined;
 	}
-	const { favorites, requests, ...place } = data;
+	const { favorites, requests, ...place } = value;
 	return {
 		...place,
 		isFavorite: favorites.length > 0,

@@ -69,6 +69,7 @@ function Search() {
 					{evacuationPlacesQuery.data?.map((evacuationPlace) => (
 						<CardWithDangerBand
 							key={evacuationPlace.id}
+							placeId={evacuationPlace.id}
 							houseName={evacuationPlace.profile.name}
 							houseImgList={evacuationPlace.pictureUrls}
 							type={evacuationPlace.area?.safety ?? 'safe'}

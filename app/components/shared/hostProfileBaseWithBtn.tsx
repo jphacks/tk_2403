@@ -4,12 +4,18 @@ import { css } from '../../../styled-system/css';
 type Props = {
 	children: ReactNode;
 	text: string;
-	requestStatus: 'requesting' | 'approved' | 'rejected' | null;
-	onCreateRequest: () => void;
-	onCancelRequest: () => void;
+	requestStatus: 'requesting' | 'approved' | 'rejected';
+	onApproveRequest: () => void;
+	onRejectRequest: () => void;
 };
 
-export default function ProfileBaseWithBtn({ children, text, requestStatus, onCreateRequest, onCancelRequest }: Props) {
+export default function HostProfileBaseWithBtn({
+	children,
+	text,
+	requestStatus,
+	onApproveRequest,
+	onRejectRequest,
+}: Props) {
 	return (
 		<div
 			className={css({
@@ -39,37 +45,38 @@ export default function ProfileBaseWithBtn({ children, text, requestStatus, onCr
 				>
 					{text}
 				</p>
-				{requestStatus === null ? (
-					<button
-						type="button"
-						className={css({
-							borderColor: 'primary',
-							rounded: 'md',
-							borderWidth: '[2px]',
-							py: '[calc(var(--spacing-2) - 2px)]',
-							px: '[calc(var(--spacing-4) - 2px)]',
-							color: 'primary',
-							fontSize: '[12px]',
-						})}
-						onClick={onCreateRequest}
-					>
-						申請する
-					</button>
-				) : requestStatus === 'requesting' ? (
-					<button
-						type="button"
-						className={css({
-							rounded: 'md',
-							py: '2',
-							px: '4',
-							color: 'white',
-							fontSize: '[12px]',
-							bg: 'primary',
-						})}
-						onClick={onCancelRequest}
-					>
-						申請中
-					</button>
+				{requestStatus === 'requesting' ? (
+					<div className={css({ display: 'flex', gap: '2' })}>
+						<button
+							type="button"
+							className={css({
+								flexShrink: '0',
+								borderColor: 'alert',
+								rounded: 'md',
+								borderWidth: '[2px]',
+								p: '[calc(var(--spacing-2) - 2px)]',
+								color: 'alert',
+								fontSize: '[12px]',
+							})}
+							onClick={onRejectRequest}
+						>
+							却下する
+						</button>
+						<button
+							type="button"
+							className={css({
+								flexShrink: '0',
+								rounded: 'md',
+								p: '2',
+								color: 'white',
+								fontSize: '[12px]',
+								bg: 'primary',
+							})}
+							onClick={onApproveRequest}
+						>
+							承認する
+						</button>
+					</div>
 				) : requestStatus === 'approved' ? (
 					<button
 						type="button"
@@ -82,7 +89,7 @@ export default function ProfileBaseWithBtn({ children, text, requestStatus, onCr
 							bg: 'safe',
 						})}
 					>
-						マッチ成立
+						承認済み
 					</button>
 				) : (
 					<button
@@ -96,7 +103,7 @@ export default function ProfileBaseWithBtn({ children, text, requestStatus, onCr
 							bg: 'alert',
 						})}
 					>
-						不成立
+						却下済み
 					</button>
 				)}
 			</div>
