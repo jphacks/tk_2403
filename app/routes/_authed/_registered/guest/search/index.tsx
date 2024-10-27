@@ -1,17 +1,37 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { Link, createFileRoute, useLocation } from '@tanstack/react-router';
 import { FiSearch } from 'react-icons/fi';
-import { css, cx } from '../../../../../../styled-system/css';
+import { css } from '../../../../../../styled-system/css';
 import Header from '../../../../../components/shared/header';
 import UserNavbar from '../../../../../components/shared/userNavbar';
 import CardWithDangerBand from '../../../../../components/shared/wantToBorrow/cardWithDangerBand';
+import { createGetEvacuationPlacesFnQueryKey } from '../../../../../query/evacuationPlace';
+import { getEvacuationPlacesFn } from '../../../../../server/evacuationPlace';
 import { layoutStyle } from '../../../../../styles/layout';
+import { serverFnQuery } from '../../../../../utils/client';
+
+const getEvacuationPlacesFnQuery = serverFnQuery(getEvacuationPlacesFn);
 
 export const Route = createFileRoute('/_authed/_registered/guest/search/')({
-	component: Page6,
+	loader: async ({ location, context }) => {
+		await context.queryClient.prefetchQuery(
+			getEvacuationPlacesFnQuery.serverQueryOptions({
+				queryKey: createGetEvacuationPlacesFnQueryKey(location.search),
+				// biome-ignore lint/suspicious/noExplicitAny:
+				queryFn: (fn) => fn(location.search as any),
+			}),
+		);
+	},
+	component: Search,
 });
 
-function Page6() {
-	const navigate = useNavigate();
+function Search() {
+	const location = useLocation();
+	const evacuationPlacesQuery = getEvacuationPlacesFnQuery.useQuery({
+		queryKey: createGetEvacuationPlacesFnQueryKey(location.search),
+		// biome-ignore lint/suspicious/noExplicitAny:
+		queryFn: (fn) => fn(location.search as any),
+	});
+
 	return (
 		<div
 			className={css({
@@ -20,23 +40,18 @@ function Page6() {
 			})}
 		>
 			<Header title="検索" />
-			<div className={cx(layoutStyle(), css({ spaceY: '4' }))}>
-				<div
+			<div className={css(layoutStyle.raw(), { spaceY: '4' })}>
+				<Link
+					to="/guest/search/filter"
+					search={location.search}
 					className={css({
 						display: 'flex',
 						alignItems: 'center',
 						borderRadius: 'md',
-
 						py: '2',
 						px: '4',
 						bg: 'white',
 					})}
-					onClick={() => navigate({ to: '/guest/search/filter' })}
-					onKeyUp={(e) => {
-						if (e.key === 'Enter' || e.key === ' ') {
-							navigate({ to: '/guest/search/filter' });
-						}
-					}}
 				>
 					<FiSearch className={css({ color: 'text.muted', fontSize: 'md' })} />
 					<p
@@ -48,32 +63,19 @@ function Page6() {
 					>
 						物件を探す
 					</p>
-				</div>
+				</Link>
 
 				<div className={css({ spaceY: '3', mt: '5' })}>
-					<CardWithDangerBand
-						houseName="山田太郎"
-						houseImgList={['https://picsum.photos/200/300', 'https://picsum.photos/200/301']}
-						type="safe"
-						address="東京都文京区大塚１‐１１‐１５"
-						intro="非常に安全な地域に位置しています。"
-					/>
-
-					<CardWithDangerBand
-						houseName="東海荘子"
-						houseImgList={['https://picsum.photos/200/302', 'https://picsum.photos/200/303']}
-						type="caution"
-						address="大阪市中央区"
-						intro="少し注意が必要ですが、便利なロケーションです。"
-					/>
-
-					<CardWithDangerBand
-						houseName="沙羅氏広大"
-						houseImgList={['https://picsum.photos/200/304', 'https://picsum.photos/200/305']}
-						type="danger"
-						address="横浜市神奈川区"
-						intro="この地域は安全面でのリスクがあります。"
-					/>
+					{evacuationPlacesQuery.data?.map((evacuationPlace) => (
+						<CardWithDangerBand
+							key={evacuationPlace.id}
+							houseName={evacuationPlace.profile.name}
+							houseImgList={evacuationPlace.pictureUrls}
+							type={evacuationPlace.area?.safety ?? 'safe'}
+							address={evacuationPlace.address}
+							intro={evacuationPlace.description}
+						/>
+					))}
 				</div>
 			</div>
 			<UserNavbar />

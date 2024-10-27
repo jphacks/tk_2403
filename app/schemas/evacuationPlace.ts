@@ -1,5 +1,25 @@
 import { z } from 'zod';
 
+export const getEvacuationPlacesSchema = z.object({
+	headcount: z
+		.string()
+		.regex(/^\d*[1-9]\d*$/, '1以上の整数で入力してください')
+		.optional(),
+	areaAddress: z.string().optional(),
+	desiredPeriodStart: z
+		.string()
+		.regex(/^\d{4}-\d{2}$/, 'YYYY-MMの形式で入力してください')
+		.optional(),
+	desiredPeriodEnd: z
+		.string()
+		.regex(/^\d{4}-\d{2}$/, 'YYYY-MMの形式で入力してください')
+		.optional(),
+	hasPet: z.boolean(),
+	needBarrierFree: z.boolean(),
+	hostGender: z.enum(['male', 'female', 'other']).optional(),
+	safety: z.enum(['safe', 'caution', 'danger']).optional(),
+});
+
 export const getEvacuationPlaceSchema = z.object({
 	id: z.number(),
 });
