@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { css } from '../../../../../../styled-system/css';
 import HeaderWithStar from '../../../../../components/guestPage/headerWithStar';
 import ImagePreview from '../../../../../components/shared/ImagePreview';
-import HostNavbar from '../../../../../components/shared/hostNavbar';
 import NotInputInfoRow from '../../../../../components/shared/notInputInfoRow';
 import ProfileBaseWithBtn from '../../../../../components/shared/profileBaseWithBtn';
 import ProfileColumn from '../../../../../components/shared/profileColumn';
+import UserNavbar from '../../../../../components/shared/userNavbar';
 import Subtitle from '../../../../../components/subtitle';
 import { getEvacuationPlaceFn } from '../../../../../server/evacuationPlace';
 import { cancelRequestFn, createRequestFn } from '../../../../../server/request';
@@ -140,7 +140,7 @@ function PlaceDetail() {
 					</div>
 				</ProfileBaseWithBtn>
 			</div>
-			<HostNavbar />
+			<UserNavbar />
 		</div>
 	);
 }
